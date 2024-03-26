@@ -1,40 +1,22 @@
-.mainBar {
-  height: 100px;
-  width: 100%;
-  background-color: #755c5c;
-  position: relative;
-}
-
-.mainLogo {
-  background-image: url('./logo/uniform_logo.png');
-  height: 100px;
-  width: 300px;
-  background-size : cover;
-  background-position : center;
-  position: relative;
-}
-
 .chatBotPage input {
   flex: 1;
   width: 100%;
   height: 42px;
   padding: 10px;
   margin-bottom: 10px;
-  border: 2px solid #ff8d3f;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  border: none;
   border-radius: 3px;
 }
 
 .chatWindow {
-  width: 90%;
-  height: 70vh;
-  background-color: rgb(252, 252, 252);
+  width: 95%;
+  height: 73vh;
   overflow-y: auto;
-  border: 2px solid #ff8d3f;
   border-radius: 8px;
-  margin-top: 50px;
-  margin-left: 70px;
-  margin-bottom: 10px;
+  margin: 10px 0 10px 30px;
   padding: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .message {
@@ -45,21 +27,44 @@
 
 .user {
   max-width: 500px;
-  background-color: #fccdaf;
   text-align: right;
   margin-left: auto;
+  margin-right: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  background-color: #8dc5fa;
+  position: relative;
 }
 
 .bot {
   max-width: 500px;
-  background-color: #c9f8c9;
   text-align: left;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.bot::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url('../../examples/chatBot/images/image.png');
+  background-size: cover;
+  margin-right: 5px;
+}
+
+.messageTime {
+  position: absolute;
+  bottom: -20px;
+  right: 0;
+  margin-right: 5px;
+  font-size: 0.8rem;
+  color: #666;
 }
 
 .inputContainer {
-  width: 90%;
+  width: 95%;
   display: flex;
-  margin-left: 70px;
+  margin-left: 30px;
 }
 
 input {
@@ -77,8 +82,8 @@ button {
   margin-bottom: 10px;
   border-radius: 5px;
   color: white;
-  background-color: #ff954f;
-  border: 2px solid #ff954f;
+  background-color: #1284f5;
+  border: 2px solid #1284f5;
 }
 
 .activityBtn {
