@@ -25,8 +25,17 @@ function ChatBot() {
   useEffect(() => {
     const welcomeMessage =
       '자기소개서에 대해 도움을 드리겠습니다. 생성, 수정 중 하나를 입력해주세요!';
-    setChat([{ type: 'bot', text: welcomeMessage }]);
+    const currentTime = formatTime(); // 현재 시간을 가져옴
+    setChat([{ type: 'bot', text: welcomeMessage, time: currentTime }]);
   }, []);
+
+  // 시간 함수
+  function formatTime() {
+    const date = new Date();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
 
   // 사용자 입력값 변경 시 호출되는 함수
   function handleInputChange(e) {
@@ -40,12 +49,16 @@ function ChatBot() {
       return;
     }
 
-    // 사용자 입력 메시지 추가
-    setChat((prevChat) => [...prevChat, { type: 'user', text: userInput }]);
+    const currentTime = formatTime(); // 현재 시간을 가져옴
+    // 사용자 입력 메시지와 시간 추가
+    setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
     setUserInput('');
 
     // 서버 url
     const apiUrl = 'http://orion.mokpo.ac.kr:8582/api/self-introduction';
+
+    // 사용자 입력값에 따라 UserSelectedType을 설정
+    const userSelectedType = userInput === '생성' || userInput === '수정' ? userInput : '기본값';
 
     // 서버 주소에 POST 요청 보내기
     fetch(apiUrl, {
@@ -53,7 +66,7 @@ function ChatBot() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ UserSelectedType: '생성' }),
+      body: JSON.stringify({ UserSelectedType: userSelectedType }),
     })
       .then((response1) => response1.json())
       .then((data1) => {
@@ -64,11 +77,11 @@ function ChatBot() {
           const formattedMessage = data1.message.replace(/\n/g, '<br>');
           const formattedQuestionList = data1.questionList.map((question) => question.replace(/\n/g, '<br>'));
 
-          // 메시지와 질문 리스트를 채팅창에 추가
+          // 메시지와 질문 리스트를 채팅창에 한꺼번에 추가
           setChat((prevChat) => [
             ...prevChat,
             { type: 'bot', text: <div dangerouslySetInnerHTML={{ __html: formattedMessage }} /> },
-            { type: 'bot', text: formattedQuestionList.map((question, index) => <div key={index} dangerouslySetInnerHTML={{ __html: question }} />) },
+            ...formattedQuestionList.map((question, index) => ({ type: 'bot', text: <div key={index} dangerouslySetInnerHTML={{ __html: question }} /> })),
           ]);
 
           // 사용자가 값을 입력할 수 있게 함
@@ -78,7 +91,7 @@ function ChatBot() {
       .catch((error) => console.error('Error:', error));
   }
 
-  function handleSendMessageSecond() {
+  function handleSendMessageSecond(userSelectedType) {
     // 사용자 입력값에서 공백 제거
     const userInputValue = userInput.trim();
 
@@ -94,17 +107,15 @@ function ChatBot() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ UserSelectedType: '1', userInput: userInputValue }),
+      body: JSON.stringify({ UserSelectedType: userSelectedType, userInput: userInputValue }),
     })
       .then((response2) => response2.json())
       .then((data2) => {
         console.log(data2);
 
-        // 사용자 입력값을 채팅창에 추가
-        setChat((prevChat) => [
-          ...prevChat,
-          { type: 'user', text: userInputValue },
-        ]);
+        const currentTime = formatTime(); // 현재 시간을 가져옴
+        // 사용자 입력 메시지와 시간 추가
+        setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
 
         // 현재 질문 인덱스 저장
         const currentQuestionIndex = questionIndex;
@@ -144,8 +155,13 @@ function ChatBot() {
 
           // 마지막 질문에 도달한 경우 서버로 전송
           if (currentQuestionIndex === data2.message.length) {
+            let problemNumber = '1'; // 기본값은 1
+            if (userInputValue === '2') {
+              problemNumber = '2';
+            }
+
             const allJson = {
-              problemNumber: '1',
+              problemNumber: problemNumber,
               question: allResponses,
             };
 
@@ -153,7 +169,15 @@ function ChatBot() {
             setLoading(true);
 
             // 서버에 사용자가 입력한 전체 응답 전송
-            fetch('http://orion.mokpo.ac.kr:8582/api/unifot', {
+            let apiUrl = '';
+            if (userSelectedType === '생성') {
+              apiUrl = 'http://orion.mokpo.ac.kr:8582/api/unifot';
+            } else if (userSelectedType === '수정') {
+              apiUrl = 'http://orion.mokpo.ac.kr:8582/api/set-unifot';
+            }
+
+            // 서버에 사용자가 입력한 전체 응답 전송
+            fetch(apiUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -220,16 +244,11 @@ function ChatBot() {
 
   return (
     <div className="chatBotPage">
-      <div className="mainBar">
-        <div className="mainLogo" />
-      </div>
       <div className="chatWindow" ref={chatWindowRef}>
         {chat.map((message, index) => (
-          <div
-            key={index}
-            className={`message ${message.type === 'user' ? 'user' : 'bot'}`}
-          >
-            {message.text}
+          <div key={index} className={`message ${message.type}`}>
+            <div className="messageText">{message.text}</div>
+            <div className="messageTime">{message.time}</div>
           </div>
         ))}
       </div>
