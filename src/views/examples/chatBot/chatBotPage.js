@@ -57,16 +57,13 @@ function ChatBot() {
     // 서버 url
     const apiUrl = 'http://orion.mokpo.ac.kr:8582/api/self-introduction';
 
-    // 사용자 입력값에 따라 UserSelectedType을 설정
-    const userSelectedType = userInput === '생성' || userInput === '수정' ? userInput : '기본값';
-
     // 서버 주소에 POST 요청 보내기
     fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': "application/json",
       },
-      body: JSON.stringify({ UserSelectedType: userSelectedType }),
+      body: JSON.stringify({ UserSelectedType: '생성' }),
     })
       .then((response1) => response1.json())
       .then((data1) => {
@@ -91,7 +88,7 @@ function ChatBot() {
       .catch((error) => console.error('Error:', error));
   }
 
-  function handleSendMessageSecond(userSelectedType) {
+  function handleSendMessageSecond() {
     // 사용자 입력값에서 공백 제거
     const userInputValue = userInput.trim();
 
@@ -107,7 +104,7 @@ function ChatBot() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ UserSelectedType: userSelectedType, userInput: userInputValue }),
+      body: JSON.stringify({ UserSelectedType: '1' }),
     })
       .then((response2) => response2.json())
       .then((data2) => {
@@ -155,13 +152,8 @@ function ChatBot() {
 
           // 마지막 질문에 도달한 경우 서버로 전송
           if (currentQuestionIndex === data2.message.length) {
-            let problemNumber = '1'; // 기본값은 1
-            if (userInputValue === '2') {
-              problemNumber = '2';
-            }
-
             const allJson = {
-              problemNumber: problemNumber,
+              problemNumber: 1,
               question: allResponses,
             };
 
@@ -169,15 +161,7 @@ function ChatBot() {
             setLoading(true);
 
             // 서버에 사용자가 입력한 전체 응답 전송
-            let apiUrl = '';
-            if (userSelectedType === '생성') {
-              apiUrl = 'http://orion.mokpo.ac.kr:8582/api/unifot';
-            } else if (userSelectedType === '수정') {
-              apiUrl = 'http://orion.mokpo.ac.kr:8582/api/set-unifot';
-            }
-
-            // 서버에 사용자가 입력한 전체 응답 전송
-            fetch(apiUrl, {
+            fetch('http://orion.mokpo.ac.kr:8582/api/unifot', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
