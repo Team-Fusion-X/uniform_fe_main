@@ -25,8 +25,17 @@ function ChatBot() {
   useEffect(() => {
     const welcomeMessage =
       '자기소개서에 대해 도움을 드리겠습니다. 생성, 수정 중 하나를 입력해주세요!';
-    setChat([{ type: 'bot', text: welcomeMessage }]);
+    const currentTime = formatTime(); // 현재 시간을 가져옴
+    setChat([{ type: 'bot', text: welcomeMessage, time: currentTime }]);
   }, []);
+
+  // 시간 함수
+  function formatTime() {
+    const date = new Date();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
 
   // 사용자 입력값 변경 시 호출되는 함수
   function handleInputChange(e) {
@@ -40,9 +49,12 @@ function ChatBot() {
       return;
     }
 
-    // 사용자 입력 메시지 추가
-    setChat((prevChat) => [...prevChat, { type: 'user', text: userInput }]);
+    const currentTime = formatTime(); // 현재 시간을 가져옴
+    // 사용자 입력 메시지와 시간 추가
+    setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
     setUserInput('');
+
+    console.log("사용자 입력값:", userInput);
 
     // 서버 url
     const apiUrl = 'http://orion.mokpo.ac.kr:8582/api/self-introduction';
@@ -51,9 +63,9 @@ function ChatBot() {
     fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': "application/json",
       },
-      body: JSON.stringify({ UserSelectedType: '생성' }),
+      body: JSON.stringify({ UserSelectedType: userInput }),
     })
       .then((response1) => response1.json())
       .then((data1) => {
@@ -64,15 +76,25 @@ function ChatBot() {
           const formattedMessage = data1.message.replace(/\n/g, '<br>');
           const formattedQuestionList = data1.questionList.map((question) => question.replace(/\n/g, '<br>'));
 
-          // 메시지와 질문 리스트를 채팅창에 추가
-          setChat((prevChat) => [
-            ...prevChat,
-            { type: 'bot', text: <div dangerouslySetInnerHTML={{ __html: formattedMessage }} /> },
-            { type: 'bot', text: formattedQuestionList.map((question, index) => <div key={index} dangerouslySetInnerHTML={{ __html: question }} />) },
-          ]);
-
-          // 사용자가 값을 입력할 수 있게 함
-          setQuestionCount(2); // 두 번째 질문으로 넘어가기 위한 상태 변경
+          // 메시지와 질문 리스트를 채팅창에 한꺼번에 추가
+          if (userInput === '생성') {
+            // '생성'일 때의 메시지 처리
+            setChat((prevChat) => [
+              ...prevChat,
+              { type: 'bot', text: <div dangerouslySetInnerHTML={{ __html: formattedMessage }} /> },
+              ...formattedQuestionList.map((question, index) => ({ type: 'bot', text: <div key={index} dangerouslySetInnerHTML={{ __html: question }} /> })),
+            ]);
+            // 사용자가 값을 입력할 수 있게 함
+            setQuestionCount(2); // 두 번째 질문으로 넘어가기 위한 상태 변경
+          } else {
+            // '수정'일 때의 메시지 처리
+            setChat((prevChat) => [
+              ...prevChat,
+              ...formattedQuestionList.map((question, index) => ({ type: 'bot', text: <div key={index} dangerouslySetInnerHTML={{ __html: question }} /> })),
+            ]);
+            // 사용자가 값을 입력할 수 있게 함
+            setQuestionCount(2); // 두 번째 질문으로 넘어가기 위한 상태 변경
+          }
         }, 1000); // 1초 지연
       })
       .catch((error) => console.error('Error:', error));
@@ -80,7 +102,7 @@ function ChatBot() {
 
   function handleSendMessageSecond() {
     // 사용자 입력값에서 공백 제거
-    const userInputValue = userInput.trim();
+    let userInputValue = userInput.trim();
 
     // 모든 사용자 응답을 저장하는 상태 업데이트
     setAllResponses((prevResponses) => [...prevResponses, userInputValue]);
@@ -88,45 +110,74 @@ function ChatBot() {
     // 사용자 입력값 초기화
     setUserInput('');
 
+    // userInputValue에 따라 UserSelectedType을 동적으로 설정
+    let userSelectedType;
+    if (userInputValue === '1') {
+      userSelectedType = '1';
+    } else if (userInputValue === '2') {
+      userSelectedType = '2';
+    } else {
+      // userInputValue가 다른 경우에 대한 처리
+    }
+
+    console.log("사용자 입력값:", userSelectedType);
+
     // 서버에 두 번째 질문에 대한 사용자 입력값을 POST 요청
     fetch('http://orion.mokpo.ac.kr:8582/api/self-introduction/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ UserSelectedType: '1', userInput: userInputValue }),
+      body: JSON.stringify({ UserSelectedType: userSelectedType }),
     })
       .then((response2) => response2.json())
       .then((data2) => {
+        console.log("사용자 입력값:", userSelectedType);
         console.log(data2);
 
-        // 사용자 입력값을 채팅창에 추가
-        setChat((prevChat) => [
-          ...prevChat,
-          { type: 'user', text: userInputValue },
-        ]);
+        const currentTime = formatTime(); // 현재 시간을 가져옴
+        // 사용자 입력 메시지와 시간 추가
+        setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
 
         // 현재 질문 인덱스 저장
-        const currentQuestionIndex = questionIndex;
+        let currentQuestionIndex = questionIndex;
 
+        /*
+        console.log(data2.message);
+        console.log(data2.message.length);
+        console.log("currentQuestionIndex:", currentQuestionIndex);
+        */
         // 채팅창에 서버 응답 메시지 및 다음 질문 추가
         const updateChat = () => {
-          if (currentQuestionIndex === 0) {
-            // 첫 번째 질문일 경우 두 개의 메시지 추가
-            setChat((prevChat) => [
-              ...prevChat,
-              { type: 'bot', text: data2.message[currentQuestionIndex] },
-              { type: 'bot', text: data2.message[currentQuestionIndex + 1] },
-            ]);
-            setQuestionIndex(currentQuestionIndex + 2);
-          } else if (currentQuestionIndex < data2.message.length) {
-            // 다음 질문이 있는 경우 해당 메시지 추가
-            setChat((prevChat) => [
-              ...prevChat,
-              { type: 'bot', text: data2.message[currentQuestionIndex] },
-            ]);
-            setQuestionIndex(currentQuestionIndex + 1);
+          // data2.message가 정의되어 있을 때만 실행
+          if (data2.message) {
+            console.log(data2.message);
+            console.log(data2.message.length);
+
+            console.log(currentQuestionIndex)
+            if (currentQuestionIndex === 0) {
+              // 첫 번째 질문일 경우 두 개의 메시지 추가
+              setChat((prevChat) => [
+                ...prevChat,
+                { type: 'bot', text: data2.message[currentQuestionIndex] },
+                { type: 'bot', text: data2.message[currentQuestionIndex + 1] },
+              ]);
+              setQuestionIndex(currentQuestionIndex + 2);
+              console.log(currentQuestionIndex)
+              console.log(data2.message.length)
+            } else if (currentQuestionIndex < data2.message.length) {
+              // 다음 질문이 있는 경우 해당 메시지 추가
+              setChat((prevChat) => [
+                ...prevChat,
+                { type: 'bot', text: data2.message[currentQuestionIndex] },
+              ]);
+              setQuestionIndex(currentQuestionIndex + 1);
+            }
+            console.log(currentQuestionIndex)
+            console.log(data2.message);
           }
+
+          console.log(currentQuestionIndex);
 
           // 사용자의 이전 응답 메시지 추가
           if (currentQuestionIndex < userResponses.length) {
@@ -142,23 +193,34 @@ function ChatBot() {
             userInputValue,
           ]);
 
+          console.log(currentQuestionIndex);
           // 마지막 질문에 도달한 경우 서버로 전송
           if (currentQuestionIndex === data2.message.length) {
             const allJson = {
-              problemNumber: '1',
+              problemNumber: userSelectedType,
               question: allResponses,
             };
 
             // 로딩 상태 설정
             setLoading(true);
 
-            // 서버에 사용자가 입력한 전체 응답 전송
-            fetch('http://orion.mokpo.ac.kr:8582/api/unifot', {
+            // 서버 주소를 담을 변수 선언
+            let apiUrl = '';
+
+            // userInput에 따라 적절한 API 엔드포인트를 apiUrl 변수에 할당
+            if (userInput === "생성") {
+              apiUrl = 'http://orion.mokpo.ac.kr:8582/api/unifot';
+            } else if (userInput === "수정") {
+              apiUrl = 'http://orion.mokpo.ac.kr:8582/api/set-unifot';
+            }
+
+            // apiUrl을 사용하여 서버에 POST 요청 보내기
+            fetch(apiUrl, {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': "application/json",
               },
-              body: JSON.stringify(allJson),
+              body: JSON.stringify({ allJson }),
             })
               .then((response3) => response3.json())
               .then((data3) => {
@@ -189,7 +251,7 @@ function ChatBot() {
   }
 
   // 엔터 키를 눌렀을 때 메시지 전송
-  function handleInputKeyPress(e) {
+  function handleInputKeyDown(e) {
     if (e.key === 'Enter') {
       if (questionCount === 1) {
         handleSendMessage();
@@ -198,6 +260,16 @@ function ChatBot() {
       }
     }
   }
+
+  // 전송버튼을 눌렀을 때 메시지 전송
+  function handleSendButtonClick() {
+    if (questionCount === 1) {
+      handleSendMessage();
+    } else if (questionCount === 2) {
+      handleSendMessageSecond();
+    }
+  }
+
 
   // 페이지 새로고침 버튼 클릭 시 초기화
   function handleRefresh() {
@@ -220,16 +292,11 @@ function ChatBot() {
 
   return (
     <div className="chatBotPage">
-      <div className="mainBar">
-        <div className="mainLogo" />
-      </div>
       <div className="chatWindow" ref={chatWindowRef}>
         {chat.map((message, index) => (
-          <div
-            key={index}
-            className={`message ${message.type === 'user' ? 'user' : 'bot'}`}
-          >
-            {message.text}
+          <div key={index} className={`message ${message.type}`}>
+            <div className="messageText">{message.text}</div>
+            <div className="messageTime">{message.time}</div>
           </div>
         ))}
       </div>
@@ -239,9 +306,9 @@ function ChatBot() {
           placeholder="질문을 입력해주세요!"
           value={userInput}
           onChange={handleInputChange}
-          onKeyPress={handleInputKeyPress}
+          onKeyDown={handleInputKeyDown}
         />
-        <button onClick={questionCount === 1 ? handleSendMessage : handleSendMessageSecond}>전송</button>
+        <button onClick={handleSendButtonClick}>전송</button>
         <button onClick={handleRefresh} className="refreshButton">
           새로고침
         </button>
