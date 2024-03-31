@@ -174,12 +174,6 @@ class DemoNavbar extends React.Component {
                       <span className="nav-link-inner--text">챗봇</span>
                     </DropdownToggle>
                   </UncontrolledDropdown>
-                  <UncontrolledDropdown nav>
-                    <DropdownToggle nav to="/chat-bot-test" tag={Link}>
-                      <i className="ni ni-collection d-lg-none mr-1" />
-                      <span className="nav-link-inner--text">챗봇테스트</span>
-                    </DropdownToggle>
-                  </UncontrolledDropdown>
                 </Nav>
                 <Nav className="align-items-lg-center ml-lg-auto" navbar>
                   <NavItem className="d-none d-lg-block ml-lg-4">

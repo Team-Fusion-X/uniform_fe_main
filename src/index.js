@@ -31,8 +31,7 @@ import Landing from "views/examples/Landing.js";
 import Login from "views/examples/Login.js";
 import Profile from "views/examples/Profile.js";
 import Register from "views/examples/Register.js";
-import ChatBot from './views/examples/chatBot/chatBotPage.js';
-import ChatBotTest from './views/examples/chatBot/chatBot.js';
+import ChatBot from './views/examples/chatBot/chatBot.js';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -48,7 +47,6 @@ root.render(
       <Route path="/profile-page" exact element={<Profile />} />
       <Route path="/register-page" exact element={<Register />} />
       <Route path="/chat-bot" element={<ChatBot />} />
-      <Route path="/chat-bot-test" element={<ChatBotTest />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   </BrowserRouter>
