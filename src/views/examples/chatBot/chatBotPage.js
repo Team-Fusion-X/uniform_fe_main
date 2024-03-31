@@ -25,17 +25,8 @@ function ChatBot() {
   useEffect(() => {
     const welcomeMessage =
       '자기소개서에 대해 도움을 드리겠습니다. 생성, 수정 중 하나를 입력해주세요!';
-    const currentTime = formatTime(); // 현재 시간을 가져옴
-    setChat([{ type: 'bot', text: welcomeMessage, time: currentTime }]);
+    setChat([{ type: 'bot', text: welcomeMessage }]);
   }, []);
-
-  // 시간 함수
-  function formatTime() {
-    const date = new Date();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
-  }
 
   // 사용자 입력값 변경 시 호출되는 함수
   function handleInputChange(e) {
@@ -49,9 +40,8 @@ function ChatBot() {
       return;
     }
 
-    const currentTime = formatTime(); // 현재 시간을 가져옴
-    // 사용자 입력 메시지와 시간 추가
-    setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
+    // 사용자 입력 메시지 추가
+    setChat((prevChat) => [...prevChat, { type: 'user', text: userInput }]);
     setUserInput('');
 
     // 서버 url
@@ -61,7 +51,7 @@ function ChatBot() {
     fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ UserSelectedType: '생성' }),
     })
@@ -74,11 +64,11 @@ function ChatBot() {
           const formattedMessage = data1.message.replace(/\n/g, '<br>');
           const formattedQuestionList = data1.questionList.map((question) => question.replace(/\n/g, '<br>'));
 
-          // 메시지와 질문 리스트를 채팅창에 한꺼번에 추가
+          // 메시지와 질문 리스트를 채팅창에 추가
           setChat((prevChat) => [
             ...prevChat,
             { type: 'bot', text: <div dangerouslySetInnerHTML={{ __html: formattedMessage }} /> },
-            ...formattedQuestionList.map((question, index) => ({ type: 'bot', text: <div key={index} dangerouslySetInnerHTML={{ __html: question }} /> })),
+            { type: 'bot', text: formattedQuestionList.map((question, index) => <div key={index} dangerouslySetInnerHTML={{ __html: question }} />) },
           ]);
 
           // 사용자가 값을 입력할 수 있게 함
@@ -104,15 +94,17 @@ function ChatBot() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ UserSelectedType: '1' }),
+      body: JSON.stringify({ UserSelectedType: '1', userInput: userInputValue }),
     })
       .then((response2) => response2.json())
       .then((data2) => {
         console.log(data2);
 
-        const currentTime = formatTime(); // 현재 시간을 가져옴
-        // 사용자 입력 메시지와 시간 추가
-        setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
+        // 사용자 입력값을 채팅창에 추가
+        setChat((prevChat) => [
+          ...prevChat,
+          { type: 'user', text: userInputValue },
+        ]);
 
         // 현재 질문 인덱스 저장
         const currentQuestionIndex = questionIndex;
@@ -153,7 +145,7 @@ function ChatBot() {
           // 마지막 질문에 도달한 경우 서버로 전송
           if (currentQuestionIndex === data2.message.length) {
             const allJson = {
-              problemNumber: 1,
+              problemNumber: '1',
               question: allResponses,
             };
 
@@ -228,11 +220,16 @@ function ChatBot() {
 
   return (
     <div className="chatBotPage">
+      <div className="mainBar">
+        <div className="mainLogo" />
+      </div>
       <div className="chatWindow" ref={chatWindowRef}>
         {chat.map((message, index) => (
-          <div key={index} className={`message ${message.type}`}>
-            <div className="messageText">{message.text}</div>
-            <div className="messageTime">{message.time}</div>
+          <div
+            key={index}
+            className={`message ${message.type === 'user' ? 'user' : 'bot'}`}
+          >
+            {message.text}
           </div>
         ))}
       </div>
