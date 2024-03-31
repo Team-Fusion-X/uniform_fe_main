@@ -86,7 +86,8 @@ function ChatBot() {
             ]);
             // 사용자가 값을 입력할 수 있게 함
             setQuestionCount(2); // 두 번째 질문으로 넘어가기 위한 상태 변경
-          } else {
+          } 
+          else {
             // '수정'일 때의 메시지 처리
             setChat((prevChat) => [
               ...prevChat,
@@ -118,9 +119,10 @@ function ChatBot() {
       userSelectedType = '2';
     } else {
       // userInputValue가 다른 경우에 대한 처리
+      console.log("사용자 입력값:", userInputValue);
     }
 
-    console.log("사용자 입력값:", userSelectedType);
+    
 
     // 서버에 두 번째 질문에 대한 사용자 입력값을 POST 요청
     fetch('http://orion.mokpo.ac.kr:8582/api/self-introduction/create', {
@@ -133,7 +135,6 @@ function ChatBot() {
       .then((response2) => response2.json())
       .then((data2) => {
         console.log("사용자 입력값:", userSelectedType);
-        console.log(data2);
 
         const currentTime = formatTime(); // 현재 시간을 가져옴
         // 사용자 입력 메시지와 시간 추가
@@ -142,19 +143,12 @@ function ChatBot() {
         // 현재 질문 인덱스 저장
         let currentQuestionIndex = questionIndex;
 
-        /*
-        console.log(data2.message);
-        console.log(data2.message.length);
-        console.log("currentQuestionIndex:", currentQuestionIndex);
-        */
         // 채팅창에 서버 응답 메시지 및 다음 질문 추가
         const updateChat = () => {
-          // data2.message가 정의되어 있을 때만 실행
           if (data2.message) {
             console.log(data2.message);
             console.log(data2.message.length);
-
-            console.log(currentQuestionIndex)
+            
             if (currentQuestionIndex === 0) {
               // 첫 번째 질문일 경우 두 개의 메시지 추가
               setChat((prevChat) => [
@@ -253,11 +247,8 @@ function ChatBot() {
   // 엔터 키를 눌렀을 때 메시지 전송
   function handleInputKeyDown(e) {
     if (e.key === 'Enter') {
-      if (questionCount === 1) {
-        handleSendMessage();
-      } else if (questionCount === 2) {
-        handleSendMessageSecond();
-      }
+      e.preventDefault(); // 기본 엔터 동작을 막음
+      handleSendButtonClick();
     }
   }
 

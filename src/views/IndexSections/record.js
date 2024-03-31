@@ -100,7 +100,7 @@ function Record() {
 
     // 주소 + 세션에 로그인한 ID로 넣기만 하면 끝
     // 서버에서 세션으로 접속된 user_id를 기반으로 score 데이터를 가져오는 Get 요청 수행
-    // axios.get('your_api_endpoint_here')  
+    // axios.get('your_api_endpoint_here')
     // .then(response => {
     //   // 서버에서 받아온 데이터를 scoreData로 설정
     //   const receivedData = response.data; // 서버에서 받아온 데이터
