@@ -1,0 +1,180 @@
+/* fullAnalLayout 스타일 */
+.fullAnalLayout {
+  width: 1300px; /* 레이아웃의 너비 설정 */
+  height: 630px; /* 레이아웃의 높이 설정 */
+  background-color: white;
+  /*background-color: #d8e8f9;*/
+  padding: 20px; /* 내부 여백 설정 */
+  box-sizing: border-box; /* 내부 여백을 요소의 전체 크기에 포함시킴 */
+  margin: auto;
+  border-radius: 15px;
+  display: flex; /* 콘텐츠를 가운데 정렬하기 위해 flex 사용 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  flex-direction: column; /* 하위 요소들을 세로로 배치 */
+}
+
+/* contentLayout 스타일 */
+.contentLayout {
+  display: flex;
+  justify-content: space-between; /* 좌우로 정렬 */
+  align-items: center;
+  background-color: white;
+  /*background-color: #f0f0f0;*/
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 70%; /* 부모 요소 fullAnalLayout의 너비의 70% */
+  margin-bottom: 20px; /* contentLayout과 contentBelow 사이의 간격 설정 */
+  height: 100px;
+}
+
+/* 성적 입력 컨테이너 스타일 */
+.gradeInputContainer {
+  width: 350px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
+  margin-right: 5px;
+  margin-top: 20px;
+}
+
+/* 성적 입력 칸 스타일 */
+.gradeInputContainer input[type="text"] {
+  width: 200px;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 0 10px;
+}
+
+/* 성적 텍스트 스타일 */
+.submitText {
+  padding: 10px 20px;
+  color: #060606;
+  border-radius: 5px;
+}
+
+/* 버튼 컨테이너 스타일 */
+.buttonContainer {
+  width: 350px;
+  
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
+  margin-left: 5px;
+  margin-top: 30px;
+}
+
+/* 카테고리 버튼 스타일 */
+.categoryButton {
+  padding: 10px 20px;
+  background-color: #4f9cee;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.categoryButton:hover {
+  background-color: #0056b3;
+}
+
+/* contentBelow 스타일 */
+.contentBelow {
+  height: 600px;
+  display: flex;
+  flex-direction: column; /* 하위 요소들을 세로로 배치 */
+  justify-content: space-between; /* 요소들을 상하로 고르게 배치 */
+  align-items: center;
+  background-color: rgb(253, 253, 253);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 70%; /* 부모 요소 fullAnalLayout의 너비의 70% */
+  margin-bottom: 20px; /* contentLayout과 contentBelow 사이의 간격 설정 */
+}
+
+/* fourColumns 스타일 */
+.fourColumns {
+  display: flex;
+  flex-direction: column; /* 컬럼들을 세로로 배치 */
+  justify-content: space-between; /* 컬럼들을 가로로 고르게 배치 */
+  width: 100%; /* 부모 요소인 contentBelow의 너비를 100%로 설정 */
+}
+
+/* column 스타일 */
+.column {
+  display: flex;
+  width: 840px; 
+  height: 80px;
+  background-color: #fff; /* 배경색 설정 */
+  padding: 20px; /* 내부 여백 설정 */
+  border-radius: 5px; /* 테두리의 모서리를 둥글게 설정 */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 설정 */
+  margin-bottom: 10px; /* 컬럼 사이의 간격 설정 */
+}
+
+.box {
+  flex: 1;
+  text-align: center;
+  font-weight: 800;
+  border: 1px solid #fefbfb;
+  margin: 5px;
+}
+
+/* progressBar 스타일 */
+.progressBarContainer {
+  width: 20%;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progressBar {
+  height: 100%;
+  text-align: center;
+  line-height: 20px; /* 수직 가운데 정렬 */
+  color: white; /* 퍼센트 텍스트 색상 */
+}
+
+/* 프로그레스 바 색상 */
+.progressBar.blue {
+  background-color: #007bff; /* 파란색 */
+}
+
+.progressBar.lime {
+  background-color: #4caf50; /* 연두색 */
+}
+
+.progressBar.orange {
+  background-color: #ff7f0e; /* 주황색 */
+}
+
+.progressBar.red {
+  background-color: #ff0000; /* 빨간색 */
+}
+
+.red-text {
+  color: red;
+}
+
+.previousButton {
+  height: 35px;
+  background-color: #ffffff;
+  color: #060606;
+  border: 2px solid #5a96f6;
+}
+
+.nextButton {
+  height: 35px;
+  background-color: #ffffff;
+  color: #060606;
+  border: 2px solid #5a96f6;
+}
