@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./FullAnal.css";
 
 function FullAnal() {
     const [data, setData] = useState([]);
     const [startIndex, setStartIndex] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const itemsPerPage = 10; // 페이지 당 항목 수
+
+    useEffect(() => {
+        // 데이터가 업데이트될 때마다 총 페이지 수를 다시 계산
+        setTotalPages(Math.ceil(data.length / itemsPerPage));
+    }, [data]);
 
     const handleButtonClick = (category) => {
         let newData = [];
@@ -92,6 +99,24 @@ function FullAnal() {
                         admissionProbability: "70",
                         category: "적절",
                     },
+                    {
+                        school: "경북대학교",
+                        major: "컴퓨터공학과",
+                        admissionProbability: "79",
+                        category: "적절",
+                    },
+                    {
+                        school: "경상대학교",
+                        major: "철학과",
+                        admissionProbability: "83",
+                        category: "적절",
+                    },
+                    {
+                        school: "전남대학교",
+                        major: "패션의류학과",
+                        admissionProbability: "67",
+                        category: "적절",
+                    },
                 ];
                 break;
             case "도전":
@@ -133,13 +158,13 @@ function FullAnal() {
                     {
                         school: "서울과학기술대학교",
                         major: "전자공학과",
-                        admissionProbability: "30",
+                        admissionProbability: "25",
                         category: "위험",
                     },
                     {
                         school: "성균관대학교",
                         major: "법학과",
-                        admissionProbability: "27",
+                        admissionProbability: "20",
                         category: "위험",
                     },
                     {
@@ -151,13 +176,31 @@ function FullAnal() {
                     {
                         school: "연세대학교",
                         major: "의학과",
-                        admissionProbability: "23",
+                        admissionProbability: "22",
                         category: "위험",
                     },
                     {
                         school: "고려대학교",
                         major: "정치외교학과",
-                        admissionProbability: "29",
+                        admissionProbability: "20",
+                        category: "위험",
+                    },
+                    {
+                        school: "이화여자대학교",
+                        major: "교육학과",
+                        admissionProbability: "10",
+                        category: "위험",
+                    },
+                    {
+                        school: "서강대학교",
+                        major: "물리교육과",
+                        admissionProbability: "1",
+                        category: "위험",
+                    },
+                    {
+                        school: "서울대학교",
+                        major: "철학과",
+                        admissionProbability: "5",
                         category: "위험",
                     },
                 ];
@@ -172,12 +215,12 @@ function FullAnal() {
     };
 
     const handlePreviousButtonClick = () => {
-        setStartIndex(Math.max(0, startIndex - 4)); // 이전 버튼 클릭 시 시작 인덱스 변경
+        setStartIndex(Math.max(0, startIndex - 10)); // 이전 버튼 클릭 시 시작 인덱스 변경
     };
 
     const handleNextButtonClick = () => {
-        if (startIndex + 4 < data.length) {
-            setStartIndex(startIndex + 4); // 다음 버튼 클릭 시 시작 인덱스 변경
+        if (startIndex + 10 < data.length) {
+            setStartIndex(startIndex + 10); // 다음 버튼 클릭 시 시작 인덱스 변경
         }
     };
 
@@ -202,7 +245,11 @@ function FullAnal() {
                 {/* 성적 입력 칸 레이아웃 */}
                 <div className="gradeInputContainer">
                     <span className="submitText">내 성적</span>
-                    <input type="text" placeholder="내 등급 표시 칸" />
+                    <input type="text" placeholder="내 등급" />
+                </div>
+                <div className="departmentInputContainer">
+                    <span className="submitText">희망 학과</span>
+                    <input type="text" placeholder="희망 학과" />
                 </div>
 
                 {/* 버튼 4개가 들어있는 컨테이너 */}
@@ -222,8 +269,8 @@ function FullAnal() {
                 </div>
             </div>
             <div className="contentBelow">
-            <div className="fourColumns">
-                    {data.slice(startIndex, startIndex + 4).map((item, index) => (
+                <div className="fourColumns">
+                    {data.slice(startIndex, startIndex + 10).map((item, index) => (
                         <div className="column" key={index}>
                             <div className={`box ${getColorClass(item.category)}`}>{item.school}</div>
                             <div className={`box ${getColorClass(item.category)}`}>{item.major}</div>
@@ -237,12 +284,13 @@ function FullAnal() {
                     ))}
                 </div>
             </div>
-            {/* 이전 버튼 */}
-            <div buttonContainer>
+            {/* 이전 버튼과 다음 버튼 사이에 페이지 수 표시 */}
+            <div className="pagination">
                 <button className="previousButton" onClick={handlePreviousButtonClick}>
                     &lt;
                 </button>
-                {/* 다음 버튼 */}
+                {/* 현재 페이지 번호와 총 페이지 수를 표시 */}
+                <span className="pageInfo">{`${startIndex / itemsPerPage + 1}/${totalPages}`}</span>
                 <button className="nextButton" onClick={handleNextButtonClick}>
                     &gt;
                 </button>

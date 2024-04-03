@@ -1,7 +1,7 @@
 /* fullAnalLayout 스타일 */
 .fullAnalLayout {
   width: 1300px; /* 레이아웃의 너비 설정 */
-  height: 630px; /* 레이아웃의 높이 설정 */
+  height: 1150px; /* 레이아웃의 높이 설정 */
   background-color: white;
   /*background-color: #d8e8f9;*/
   padding: 20px; /* 내부 여백 설정 */
@@ -31,7 +31,7 @@
 
 /* 성적 입력 컨테이너 스타일 */
 .gradeInputContainer {
-  width: 350px;
+  width: 200px;
 
   display: flex;
   align-items: center;
@@ -43,18 +43,39 @@
 
 /* 성적 입력 칸 스타일 */
 .gradeInputContainer input[type="text"] {
-  width: 200px;
+  width: 40px;
   height: 40px;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 0 10px;
 }
 
-/* 성적 텍스트 스타일 */
+/* 성적 및 희망학과 텍스트 스타일 */
 .submitText {
   padding: 10px 20px;
   color: #060606;
   border-radius: 5px;
+}
+
+/* 희망 학과 입력 컨테이너 스타일 */
+.departmentInputContainer {
+  width: 350px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
+  margin-right: 5px;
+  margin-top: 20px;
+}
+
+/* 희망 학과 입력 칸 스타일 */
+.departmentInputContainer input[type="text"] {
+  width: 150px;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 0 10px;
 }
 
 /* 버튼 컨테이너 스타일 */
@@ -63,14 +84,15 @@
   
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
-  margin-left: 5px;
   margin-top: 30px;
+  justify-content: flex-end;
 }
 
 /* 카테고리 버튼 스타일 */
 .categoryButton {
+  width: 70px;
   padding: 10px 20px;
   background-color: #4f9cee;
   color: #ffffff;
@@ -86,7 +108,7 @@
 
 /* contentBelow 스타일 */
 .contentBelow {
-  height: 600px;
+  height: 1150px;
   display: flex;
   flex-direction: column; /* 하위 요소들을 세로로 배치 */
   justify-content: space-between; /* 요소들을 상하로 고르게 배치 */
@@ -159,6 +181,7 @@
 
 .progressBar.red {
   background-color: #ff0000; /* 빨간색 */
+  color: black;
 }
 
 .red-text {
