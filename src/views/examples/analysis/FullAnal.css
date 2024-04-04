@@ -201,3 +201,17 @@
   color: #060606;
   border: 2px solid #5a96f6;
 }
+
+.pageNumber {
+    /* 기본 페이지 번호 스타일 */
+    transition: color 0.3s ease;
+}
+
+.pageNumber:hover {
+    color: #007bff; /* 호버 시 색상 변경 */
+}
+
+.active {
+    font-weight: bold;
+    color: #dc3545; /* 현재 페이지 번호 색상 */
+}
