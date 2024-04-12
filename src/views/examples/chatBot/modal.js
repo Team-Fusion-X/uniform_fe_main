@@ -1,7 +1,7 @@
 import React from 'react';
 import './modal.css';
 
-const Modal3 = ({ closeModal }) => {
+const Modal = ({ closeModal }) => {
   return (
     <div className="modalOverlay">
       <div className="modalContent">
@@ -19,4 +19,4 @@ const Modal3 = ({ closeModal }) => {
   );
 };
 
-export default Modal3;
+export default Modal;
