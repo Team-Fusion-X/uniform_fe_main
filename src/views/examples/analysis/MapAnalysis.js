@@ -2,7 +2,6 @@ import React from "react";
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import SimpleFooter from "components/Footers/SimpleFooter.js";
 import UMap from "./UMap";
-import Overlay from "./Overlay";
 
 class Landing extends React.Component {
   state = {};
@@ -28,7 +27,7 @@ class Landing extends React.Component {
 
           {/* 작업공간 시작 */}
           <section className="section" style={{ paddingTop: '1rem', paddingBottom: '3rem' }}>
-            <Overlay />
+            <UMap />
           </section>
           {/* 작업공간 끝 */}
 
