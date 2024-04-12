@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Map, MarkerClusterer, MapMarker, ZoomControl } from "react-kakao-maps-sdk";
-import data from './uni_map_data.json';
+import { Map, MarkerClusterer, MapMarker, ZoomControl, CustomOverlayMap } from "react-kakao-maps-sdk";
+import data from './map_data.json';
+import { CgClose } from "react-icons/cg";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 const UMap = () => {
     const [clusterLevel, setClusterLevel] = useState(10); // 클러스터 확대 레벨
@@ -53,7 +55,10 @@ const UMap = () => {
                 {selectedMarker && ( // 선택된 마커가 있을 때만 이벤트 마커 표시
                     <EventMarkerContainer
                         position={selectedMarker.latlng}
-                        content={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).university}
+                        university={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).university}
+                        location={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).location}
+                        url={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).home_url}
+                        logo={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).logo}
                     />
                 )}
                 <ZoomControl position="RIGHT_BOTTOM" />
@@ -62,8 +67,63 @@ const UMap = () => {
     );
 };
 
-const EventMarkerContainer = ({ position, content }) => {
+
+
+const EventMarkerContainer = ({ position, university, location, url, logo }) => {
     const [isOpen, setIsOpen] = useState(false);
+    // 인라인 스타일 정의
+    const styles = {
+        overlay: {
+            border: '1px solid #ddd',
+            overflow: 'hidden',
+            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+            minWidth: '380px', // 최소 너비 설정
+            minHeight: '200px', // 최소 높이 설정
+        },
+        title: {
+            backgroundColor: '#f9f9f9',
+            color: '#333',
+            padding: '10px 15px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            borderBottom: '1px solid #ddd',
+            borderRight: '1px solid #999',
+        },
+        closeButton: {
+            width: '18px', // 닫기 버튼의 너비
+            height: '18px', // 닫기 버튼의 높이
+            cursor: 'pointer',
+            position: 'absolute',
+            right: '8px',
+            top: '8%',
+        },
+        body: {
+            padding: '15px',
+            fontSize: '14px',
+            color: '#666',
+        },
+        img: {
+            float: 'left',
+            marginRight: '15px',
+            width: '130px',
+            height: '130px'
+        },
+        desc: {
+            overflow: 'hidden',
+        },
+        ellipsis: {
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'clip',
+            whiteSpace: 'normal', // 텍스트가 다음 줄로 넘어갈 수 있도록 설정
+            fontSize: '15px',
+        },
+        link: {
+            color: '#1a0dab',
+            textDecoration: 'none',
+            fontSize: '12px',
+        },
+    };
 
     return (
         <MapMarker
@@ -73,26 +133,44 @@ const EventMarkerContainer = ({ position, content }) => {
         >
             {isOpen && (
                 <div style={{ minWidth: "150px" }}>
-                    <img
-                        alt="close"
-                        width="14"
-                        height="13"
-                        src="https://t1.daumcdn.net/localimg/localimages/07/mapjsapi/2x/bt_close.gif"
-                        style={{
-                            position: "absolute",
-                            right: "5px",
-                            top: "5px",
-                            cursor: "pointer",
-                        }}
+                    <CgClose
+                        style={styles.closeButton}
                         onClick={(e) => {
                             e.stopPropagation(); // 이벤트 버블링 방지
                             setIsOpen(false);
                         }}
                     />
-                    <div style={{ padding: "5px", color: "#000" }}>{content}</div>
+
+                    <div style={styles.overlay}>
+                        <div style={styles.title}>
+                            {university}
+                        </div>
+                        <div style={styles.body}>
+                            <div>
+                                <img
+                                    src={logo}
+                                    style={styles.img}
+                                />
+                            </div>
+                        </div>
+                        <div style={styles.desc}>
+                            <div style={styles.ellipsis}>
+                                {location}
+                            </div>
+                            <div style={styles.link}>
+                                <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    {url}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
-        </MapMarker>
+        </MapMarker >
     )
 }
 
