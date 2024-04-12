@@ -16,7 +16,7 @@
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     width: 60%;
-    border: 2px solid #ff954f;
+    border: 2px solid #070707;
 }
 
 .modalHeader {
@@ -57,31 +57,4 @@
     line-height: 1.5;
     margin-bottom: 10px;
     white-space: nowrap;
-}
-
-.modalBody img {
-    width: 95%;
-    height: 500px;
-    transition: transform 0.3s ease-in-out;
-}
-
-.modalBody img.hovered {
-    transform: scale(1.2);
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-.pagination span {
-    margin-top: 8px;
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-.pagination button {
-    width: 30px;
-    height: 35px;
 }

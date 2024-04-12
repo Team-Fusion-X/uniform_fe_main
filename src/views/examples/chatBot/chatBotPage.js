@@ -1,22 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './chatBotPage.css';
-import Modal1 from './modal1.js';
-import Modal2 from './modal2.js';
-import Modal3 from './modal3.js';
+import Modal from './modal.js';
 
 function ChatBot() {
   const [userInput, setUserInput] = useState(''); // 사용자의 입력을 저장하는 상태
   const [chat, setChat] = useState([]); // 채팅 내용을 저장하는 상태
   const [userResponses, setUserResponses] = useState([]); // 사용자의 답변을 저장하는 상태
   const chatWindowRef = useRef(null); // 채팅창을 자동으로 스크롤하는데 사용되는 useRef
-  const [showCompetitionModal, setShowCompetitionModal] = useState(false); // 공모전 모달 표시 여부
-  const [showActivityModal, setShowActivityModal] = useState(false); // 교과활동 모달 표시 여부
   let [questionCount, setQuestionCount] = useState(1); // 질문 카운트를 저장하는 상태
   const [questionIndex, setQuestionIndex] = useState(0); // 질문 인덱스를 저장하는 상태
   const [loading, setLoading] = useState(false); // 로딩 여부를 저장하는 상태
   const [questionData, setQuestionData] = useState([]); // 공통질문 생성 곳간
   const [questionDataCount, setQuestionDataCount] = useState("");
   const [firstQuestion, setFirstQuestion] = useState('');
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
   // 채팅창이 업데이트될 때 자동으로 스크롤을 아래로 이동시키는 useEffect
   useEffect(() => {
@@ -82,7 +79,6 @@ function ChatBot() {
           // 메시지와 질문 리스트의 개행 문자를 처리
           const formattedMessage = data1.message.replace(/\n/g, '<br>');
           const formattedQuestionList = data1.questionList.map((question) => question.replace(/\n/g, '<br>'));
-          setQuestionCount(2); // 두 번째 질문으로 넘어가기 위한 상태 변경
 
           if (userInput === '생성') {
             setFirstQuestion('생성');
@@ -91,17 +87,33 @@ function ChatBot() {
               { type: 'bot', text: <div dangerouslySetInnerHTML={{ __html: formattedMessage }} /> },
               ...formattedQuestionList.map((question, index) => ({ type: 'bot', text: <div key={index} dangerouslySetInnerHTML={{ __html: question }} /> })),
             ]);
-          } 
-          else {
+            setQuestionCount(2); // 두 번째 질문으로 넘어가기 위한 상태 변경
+          }
+          else if (userInput === '수정') {
             setFirstQuestion('수정');
-            setChat((prevChat) => [
-              ...prevChat,
-              ...formattedQuestionList.map((question, index) => ({ type: 'bot', text: <div key={index} dangerouslySetInnerHTML={{ __html: question }} /> })),
-            ]);
+            handleSendMessageModify(formattedQuestionList); // 수정 모드일 때만 handleSendMessageModify() 호출
+            // '수정' 모드에서 사용자의 입력마다 메시지 리스트의 다음 항목을 보여줌
           }
         }, 1000); // 1초 지연
       })
       .catch((error) => console.error('Error:', error));
+  }
+
+  function handleSendMessageModify(formattedQuestionList) {
+    // 배열의 각 요소를 순회하면서 개행 문자 처리하여 메시지를 채팅창에 추가
+    const formattedMessages = formattedQuestionList.map((message) => message.replace(/\n/g, '<br>'));
+  
+    // 현재 띄워야 할 메시지의 인덱스가 배열의 범위를 초과하는지 확인
+    if (currentMessageIndex < formattedMessages.length) {
+      // 현재 인덱스가 배열의 범위 내에 있는 경우 메시지 추가
+      setChat((prevChat) => [
+        ...prevChat,
+        { type: 'bot', text: <div dangerouslySetInnerHTML={{ __html: formattedMessages[currentMessageIndex] }} /> },
+      ]);
+    } else {
+      // 현재 인덱스가 배열의 범위를 초과하는 경우 추가할 메시지가 없으므로 종료
+      console.error('No message to display');
+    }
   }
 
   function handleSendMessageSecond() {
@@ -117,7 +129,7 @@ function ChatBot() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ UserSelectedType: tmp}),
+      body: JSON.stringify({ UserSelectedType: tmp }),
     })
       .then((response2) => response2.json())
       .then((data2) => {
@@ -165,10 +177,18 @@ function ChatBot() {
 
       // 마지막 질문에 도달한 경우 서버로 전송
       if (questionIndex === questionData.length) {
-        const allJson = {
-          problemNumber: questionDataCount,
-          question: userResponses,
-        };
+        // allJson 데이터 구조를 '생성'과 '수정' 모드에 따라 다르게 준비
+        let allJson;
+        if (firstQuestion === "생성") {
+          allJson = {
+            problemNumber: questionDataCount,
+            question: userResponses,
+          };
+        } else if (firstQuestion === "수정") {
+          allJson = {
+            question: userResponses,
+          };
+        }
 
         // 로딩 상태 설정
         setLoading(true);
@@ -184,12 +204,12 @@ function ChatBot() {
         }
 
         // apiUrl을 사용하여 서버에 POST 요청 보내기
-        fetch('http://orion.mokpo.ac.kr:8582/api/unifot', {
+        fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': "application/json",
           },
-          body: JSON.stringify({ allJson }),
+          body: JSON.stringify(allJson),
         })
           .then((response3) => response3.json())
           .then((data3) => {
@@ -208,11 +228,11 @@ function ChatBot() {
           })
           .catch((error) => console.error('Error:', error))
           .finally(() => {
-            setLoading(false); // 'unifot' API 호출이 완료되면 loading 상태를 false로 설정
+            setLoading(false); // API 호출이 완료되면 로딩 상태를 false로 설정
           });
       }
     }
-  };
+  }
 
   // 엔터 키를 눌렀을 때 메시지 전송
   function handleInputKeyDown(e) {
@@ -247,9 +267,7 @@ function ChatBot() {
 
   // 모달 닫기 함수
   function closeModal() {
-    // 각각의 모달 및 로딩 상태를 닫거나 초기화
-    setShowActivityModal(false);
-    setShowCompetitionModal(false);
+    // 모달 및 로딩 상태를 닫거나 초기화
     setLoading(false);
   }
 
@@ -278,26 +296,10 @@ function ChatBot() {
       </div>
 
       {/* 모달 표시 */}
-      {showActivityModal && (
-        <div className="modal">
-          <div className="modalContent">
-            <Modal2 closeModal={closeModal} />
-          </div>
-        </div>
-      )}
-
-      {showCompetitionModal && (
-        <div className="modal">
-          <div className="modalContent">
-            <Modal1 closeModal={closeModal} />
-          </div>
-        </div>
-      )}
-
       {loading && (
         <div className="modal">
           <div className="modalContent">
-            <Modal3 closeModal={closeModal} />
+            <Modal closeModal={closeModal} />
           </div>
         </div>
       )}
