@@ -12,8 +12,8 @@ function ChatBot() {
   const [loading, setLoading] = useState(false); // 로딩 여부를 저장하는 상태
   const [questionData, setQuestionData] = useState([]); // 공통질문 생성 곳간
   const [questionDataCount, setQuestionDataCount] = useState("");
-  const [firstQuestion, setFirstQuestion] = useState('');
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  let [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  let [formattedQuestionList, setFormattedQuestionList] = useState([]);
 
   // 채팅창이 업데이트될 때 자동으로 스크롤을 아래로 이동시키는 useEffect
   useEffect(() => {
@@ -60,8 +60,7 @@ function ChatBot() {
     }
 
     const currentTime = formatTime(); // 현재 시간을 가져옴
-    // 사용자 입력 메시지와 시간 추가
-    setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
+
     setUserInput('');
 
     const apiUrl = 'http://orion.mokpo.ac.kr:8582/api/self-introduction';
@@ -77,22 +76,22 @@ function ChatBot() {
         // 채팅창에 메시지 및 질문 리스트 추가
         setTimeout(() => {
           // 메시지와 질문 리스트의 개행 문자를 처리
-          const formattedMessage = data1.message.replace(/\n/g, '<br>');
-          const formattedQuestionList = data1.questionList.map((question) => question.replace(/\n/g, '<br>'));
-
           if (userInput === '생성') {
-            setFirstQuestion('생성');
+            const formattedMessage = data1.message.replace(/\n/g, '<br>');
+            const formattedQuestionList = data1.questionList.map((question) => question.replace(/\n/g, '<br>'));
             setChat((prevChat) => [
               ...prevChat,
+              { type: 'user', text: userInput, time: currentTime },
               { type: 'bot', text: <div dangerouslySetInnerHTML={{ __html: formattedMessage }} /> },
               ...formattedQuestionList.map((question, index) => ({ type: 'bot', text: <div key={index} dangerouslySetInnerHTML={{ __html: question }} /> })),
             ]);
             setQuestionCount(2); // 두 번째 질문으로 넘어가기 위한 상태 변경
           }
           else if (userInput === '수정') {
-            setFirstQuestion('수정');
+            const formattedQuestionList = data1.questionList.map((question) => question.replace(/\n/g, '<br>'));
+            console.log(data1.questionList)
+            // '수정' 모드에서 첫 번째 질문을 채팅창에 표시
             handleSendMessageModify(formattedQuestionList); // 수정 모드일 때만 handleSendMessageModify() 호출
-            // '수정' 모드에서 사용자의 입력마다 메시지 리스트의 다음 항목을 보여줌
           }
         }, 1000); // 1초 지연
       })
@@ -100,19 +99,79 @@ function ChatBot() {
   }
 
   function handleSendMessageModify(formattedQuestionList) {
+    const currentTime = formatTime(); // 현재 시간을 가져옴
+    // 사용자 입력 메시지와 시간 추가
+    setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
+
     // 배열의 각 요소를 순회하면서 개행 문자 처리하여 메시지를 채팅창에 추가
-    const formattedMessages = formattedQuestionList.map((message) => message.replace(/\n/g, '<br>'));
-  
-    // 현재 띄워야 할 메시지의 인덱스가 배열의 범위를 초과하는지 확인
-    if (currentMessageIndex < formattedMessages.length) {
-      // 현재 인덱스가 배열의 범위 내에 있는 경우 메시지 추가
-      setChat((prevChat) => [
-        ...prevChat,
-        { type: 'bot', text: <div dangerouslySetInnerHTML={{ __html: formattedMessages[currentMessageIndex] }} /> },
-      ]);
-    } else {
-      // 현재 인덱스가 배열의 범위를 초과하는 경우 추가할 메시지가 없으므로 종료
-      console.error('No message to display');
+    console.log(currentMessageIndex)
+    console.log(formattedQuestionList.length)
+    console.log(formattedQuestionList)
+
+    setTimeout(() => {
+      if (currentMessageIndex < formattedQuestionList.length) {
+        // 현재 인덱스가 배열의 범위 내에 있는 경우 메시지 추가
+        setChat((prevChat) => [
+          ...prevChat,
+          { type: 'bot', text: formattedQuestionList[currentMessageIndex] }, // 인덱스 조정
+        ]);
+        setCurrentMessageIndex(currentMessageIndex + 1); // 다음 메시지를 위해 인덱스 증가
+        setFormattedQuestionList(formattedQuestionList);
+        setQuestionCount(4);
+      } else {
+        // 모든 메시지가 표시된 후의 처리
+        console.log('모든 수정 질문에 대한 응답이 완료되었습니다.');
+      }
+    }, 1000); // 1초 지연
+
+    // 사용자 응답을 userResponses 상태에 추가
+    if (userInput.trim()) {
+      setUserResponses(prevResponses => [...prevResponses, userInput]);
+    }
+
+    setUserInput('');
+
+    // 모든 질문에 대한 응답이 완료된 경우
+    if (currentMessageIndex === formattedQuestionList.length) {
+      // 사용자의 응답이 모두 완료되었으므로 서버에 전송
+      // 로딩 상태 설정
+      setLoading(true);
+
+      let allJson = {
+        // '수정' 모드에 필요한 데이터 구조
+        question: userResponses,
+      };
+
+      // 서버 주소를 담을 변수 선언
+      let apiUrl = 'http://orion.mokpo.ac.kr:8582/api/set-unifot'; // '수정' 모드에 맞는 API 엔드포인트
+
+      // apiUrl을 사용하여 서버에 POST 요청 보내기
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': "application/json",
+        },
+        body: JSON.stringify(allJson),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data); // 서버로부터의 응답 처리
+          console.log(apiUrl)
+          // JSX에서 개행 문자를 <br>로 바꾸어 출력
+          const formattedAnswer = data.answer.split('\n').map((line, index) => (
+            <React.Fragment key={index}>
+              {line}
+              <br />
+            </React.Fragment>
+          ));
+
+          // 채팅창에 서버 응답 추가  
+          setChat((prevChat) => [...prevChat, { type: 'bot', text: formattedAnswer }]);
+        })
+        .catch((error) => console.error('Error:', error))
+        .finally(() => {
+          setLoading(false); // API 호출이 완료되면 로딩 상태를 false로 설정
+        });
     }
   }
 
@@ -179,16 +238,10 @@ function ChatBot() {
       if (questionIndex === questionData.length) {
         // allJson 데이터 구조를 '생성'과 '수정' 모드에 따라 다르게 준비
         let allJson;
-        if (firstQuestion === "생성") {
-          allJson = {
-            problemNumber: questionDataCount,
-            question: userResponses,
-          };
-        } else if (firstQuestion === "수정") {
-          allJson = {
-            question: userResponses,
-          };
-        }
+        allJson = {
+          problemNumber: questionDataCount,
+          question: userResponses,
+        };
 
         // 로딩 상태 설정
         setLoading(true);
@@ -196,12 +249,8 @@ function ChatBot() {
         // 서버 주소를 담을 변수 선언
         let apiUrl = '';
 
-        // userInput에 따라 적절한 API 엔드포인트를 apiUrl 변수에 할당
-        if (firstQuestion === "생성") {
-          apiUrl = 'http://orion.mokpo.ac.kr:8582/api/unifot';
-        } else if (firstQuestion === "수정") {
-          apiUrl = 'http://orion.mokpo.ac.kr:8582/api/set-unifot';
-        }
+        // API 엔드포인트를 apiUrl 변수에 할당
+        apiUrl = 'http://orion.mokpo.ac.kr:8582/api/unifot';
 
         // apiUrl을 사용하여 서버에 POST 요청 보내기
         fetch(apiUrl, {
@@ -250,6 +299,8 @@ function ChatBot() {
       handleSendMessageSecond();
     } else if (questionCount === 3) {
       handleProcessQuestionResponse();
+    } else if (questionCount === 4) {
+      handleSendMessageModify(formattedQuestionList);
     }
   }
 
