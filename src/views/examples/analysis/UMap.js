@@ -1,58 +1,74 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Map, MarkerClusterer, MapMarker, ZoomControl, CustomOverlayMap } from "react-kakao-maps-sdk";
-import data from './map_data.json';
 import { CgClose } from "react-icons/cg";
-import { FaMapMarkerAlt } from "react-icons/fa";
+import red_marker from './image/red.png';
+import blue_marker from './image/blue.png';
+import green_marker from './image/green.png';
+import yellow_marker from './image/yellow.png';
+import data from './test_user_data.json';
 
 const UMap = () => {
-    const [clusterLevel, setClusterLevel] = useState(10); // 클러스터 확대 레벨
+    const [clusterLevel, setClusterLevel] = useState(10);
     const [positions, setPositions] = useState([]);
-    const [selectedMarker, setSelectedMarker] = useState(null); // 클릭된 마커 정보
-    const mapRef = useRef(null); // 지도 인스턴스 참조
+    const [selectedMarker, setSelectedMarker] = useState(null);
+    const mapRef = useRef(null);
+    const maxLevel = 13;
+
+    // 마커 이미지를 결정하는 함수
+    const getMarkerImage = (passValue) => {
+        if (passValue <= 25) return red_marker;
+        if (passValue <= 45) return yellow_marker;
+        if (passValue <= 65) return green_marker;
+        return blue_marker;
+    };
 
     useEffect(() => {
-        // 위도, 경도만 추출하여 positions에 설정
         const positionsArray = data.map(item => ({
             lat: item.lat,
-            lng: item.lng
+            lng: item.lng,
+            image: getMarkerImage(item.pass), // pass 값에 따라 이미지를 결정
         }));
         setPositions(positionsArray);
     }, []);
 
     return (
         <>
-            <Map // 지도를 표시할 Container
-                ref={mapRef} // 지도 인스턴스 참조 설정
-                center={{ lat: 33.450701, lng: 126.570667 }}
-                style={{
-                    // 지도의 크기
-                    width: "100%",
-                    height: "450px",
-                }}
-                level={14} // 지도의 확대 레벨
+            <Map
+                ref={mapRef}
+                center={{ lat: 35.688291717895794, lng: 127.96375234744477 }}
+                style={{ width: "100%", height: "550px" }}
+                level={13}
                 onZoomChanged={() => {
-                    // 클러스터 확대 레벨 초기화
+                    if (mapRef.current) {
+                        const currentLevel = mapRef.current.getLevel();
+                        if (currentLevel > maxLevel) {
+                            mapRef.current.setLevel(maxLevel);
+                        }
+                    }
                     setClusterLevel(10);
-                    // 선택된 마커 초기화
                     setSelectedMarker(null);
                 }}
             >
                 <MarkerClusterer
-                    averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-                    minLevel={10} // 클러스터 할 최소 지도 레벨
+                    averageCenter={true}
+                    minLevel={10}
                 >
                     {positions.map((pos, index) => (
                         <MapMarker
                             key={index}
-                            position={{
-                                lat: pos.lat,
-                                lng: pos.lng,
+                            position={pos}
+                            image={{
+                                src: pos.image, // 사용자 정의 마커 이미지
+                                size: {
+                                    width: 35,
+                                    height: 35
+                                }
                             }}
-                            onClick={() => setSelectedMarker({ latlng: pos })} // 마커 클릭 이벤트 처리
+                            onClick={() => setSelectedMarker({ latlng: pos })}
                         />
                     ))}
                 </MarkerClusterer>
-                {selectedMarker && ( // 선택된 마커가 있을 때만 이벤트 마커 표시
+                {selectedMarker && (
                     <EventMarkerContainer
                         position={selectedMarker.latlng}
                         university={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).university}
@@ -67,18 +83,24 @@ const UMap = () => {
     );
 };
 
-
-
 const EventMarkerContainer = ({ position, university, location, url, logo }) => {
     const [isOpen, setIsOpen] = useState(false);
-    // 인라인 스타일 정의
+
+    // 마커 이미지를 결정하는 함수
+    const getMarkerImage = (passValue) => {
+        if (passValue <= 25) return red_marker;
+        if (passValue <= 45) return yellow_marker;
+        if (passValue <= 65) return green_marker;
+        return blue_marker;
+    };
+
     const styles = {
         overlay: {
             border: '1px solid #ddd',
             overflow: 'hidden',
             boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
-            minWidth: '380px', // 최소 너비 설정
-            minHeight: '200px', // 최소 높이 설정
+            minWidth: '380px',
+            minHeight: '200px',
         },
         title: {
             backgroundColor: '#f9f9f9',
@@ -90,8 +112,8 @@ const EventMarkerContainer = ({ position, university, location, url, logo }) => 
             borderRight: '1px solid #999',
         },
         closeButton: {
-            width: '18px', // 닫기 버튼의 너비
-            height: '18px', // 닫기 버튼의 높이
+            width: '18px',
+            height: '18px',
             cursor: 'pointer',
             position: 'absolute',
             right: '8px',
@@ -100,6 +122,7 @@ const EventMarkerContainer = ({ position, university, location, url, logo }) => 
         body: {
             padding: '15px',
             fontSize: '14px',
+
             color: '#666',
         },
         img: {
@@ -114,7 +137,7 @@ const EventMarkerContainer = ({ position, university, location, url, logo }) => 
         ellipsis: {
             whiteSpace: 'nowrap',
             overflow: 'hidden',
-            textOverflow: 'clip',
+            textOverflow: 'ellipsis',
             whiteSpace: 'normal', // 텍스트가 다음 줄로 넘어갈 수 있도록 설정
             fontSize: '15px',
         },
@@ -130,6 +153,13 @@ const EventMarkerContainer = ({ position, university, location, url, logo }) => 
             position={position}
             onClick={() => setIsOpen(!isOpen)}
             clickable={true}
+            image={{
+                src: position.image, // 사용자 정의 마커 이미지
+                size: {
+                    width: 35,
+                    height: 35
+                }
+            }}
         >
             {isOpen && (
                 <div style={{ minWidth: "150px" }}>
@@ -152,19 +182,19 @@ const EventMarkerContainer = ({ position, university, location, url, logo }) => 
                                     style={styles.img}
                                 />
                             </div>
-                        </div>
-                        <div style={styles.desc}>
-                            <div style={styles.ellipsis}>
-                                {location}
-                            </div>
-                            <div style={styles.link}>
-                                <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                >
-                                    {url}
-                                </a>
+                            <div style={styles.desc}>
+                                <div style={styles.ellipsis}>
+                                    {location}
+                                </div>
+                                <div style={styles.link}>
+                                    <a
+                                        href={url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        {url}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
