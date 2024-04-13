@@ -8,10 +8,11 @@ import SimpleFooter from "components/Footers/SimpleFooter.js";
 import Record from '../IndexSections/record.js';
 
 function Profile() {
-  const { auth } = useAuth();
+  const { setAuth, auth } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    
     // 페이지 로드 시 스크롤을 최상단으로 이동
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
