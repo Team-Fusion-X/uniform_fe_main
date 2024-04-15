@@ -52,6 +52,15 @@
   margin-right: 5px;
 }
 
+.user::before {
+  content: '';
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background-image: url('../../examples/chatBot/images/user.png');
+  background-size: cover;
+}
+
 .messageTime {
   position: absolute;
   bottom: -20px;
