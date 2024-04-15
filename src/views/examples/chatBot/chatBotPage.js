@@ -82,18 +82,17 @@ function ChatBot() {
             setChat((prevChat) => [
               ...prevChat,
               { type: 'user', text: userInput, time: currentTime },
-              { type: 'bot', text: <div dangerouslySetInnerHTML={{ __html: formattedMessage }} /> },
-              ...formattedQuestionList.map((question, index) => ({ type: 'bot', text: <div key={index} dangerouslySetInnerHTML={{ __html: question }} /> })),
+              { type: 'bot', text: <div dangerouslySetInnerHTML={{ __html: formattedMessage }} />, time: currentTime },
+              ...formattedQuestionList.map((question, index) => ({ type: 'bot', text: <div key={index} dangerouslySetInnerHTML={{ __html: question }} />, time: currentTime })),
             ]);
             setQuestionCount(2); // 두 번째 질문으로 넘어가기 위한 상태 변경
-          }
-          else if (userInput === '수정') {
+          } else if (userInput === '수정') {
             const formattedQuestionList = data1.questionList.map((question) => question.replace(/\n/g, '<br>'));
             console.log(data1.questionList)
             // '수정' 모드에서 첫 번째 질문을 채팅창에 표시
             handleSendMessageModify(formattedQuestionList); // 수정 모드일 때만 handleSendMessageModify() 호출
           }
-        }, 1000); // 1초 지연
+        }, 500); // 0.5초 지연
       })
       .catch((error) => console.error('Error:', error));
   }
@@ -113,7 +112,7 @@ function ChatBot() {
         // 현재 인덱스가 배열의 범위 내에 있는 경우 메시지 추가
         setChat((prevChat) => [
           ...prevChat,
-          { type: 'bot', text: formattedQuestionList[currentMessageIndex] }, // 인덱스 조정
+          { type: 'bot', text: formattedQuestionList[currentMessageIndex], time: currentTime }, // 인덱스 조정
         ]);
         setCurrentMessageIndex(currentMessageIndex + 1); // 다음 메시지를 위해 인덱스 증가
         setFormattedQuestionList(formattedQuestionList);
@@ -195,15 +194,18 @@ function ChatBot() {
         const currentTime = formatTime();
         // 사용자 입력 메시지와 시간 추가
         setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
-        setQuestionData(data2.message);
 
-        setChat((prevChat) => [
-          ...prevChat,
-          { type: 'bot', text: data2.message[questionIndex] },
-          { type: 'bot', text: data2.message[questionIndex + 1] },
-        ]);
+        setTimeout(() => {
+          setQuestionData(data2.message);
 
-        setQuestionIndex(questionIndex + 2);
+          setChat((prevChat) => [
+            ...prevChat,
+            { type: 'bot', text: data2.message[questionIndex] },
+            { type: 'bot', text: data2.message[questionIndex + 1], time: currentTime },
+          ]);
+
+          setQuestionIndex(questionIndex + 2);
+        }, 1000); // 1초 후 실행
         setUserInput('');
       })
       .catch((error) => console.error('Error:', error));
@@ -211,19 +213,23 @@ function ChatBot() {
 
   function handleProcessQuestionResponse() {
     if (questionData) {
+      const currentTime = formatTime();
       // 사용자의 이전 응답 메시지 추가
       setChat((prevChat) => [
         ...prevChat,
-        { type: 'user', text: userInput },
+        { type: 'user', text: userInput, time: currentTime },
       ]);
 
       // 다음 질문이 있는 경우 해당 메시지 추가
       if (questionIndex < questionData.length) {
-        setChat((prevChat) => [
-          ...prevChat,
-          { type: 'bot', text: questionData[questionIndex] },
-        ]);
-        setQuestionIndex(questionIndex + 1);
+        setTimeout(() => { // 1초 지연을 위해 setTimeout 사용
+          const currentTime = formatTime();
+          setChat((prevChat) => [
+            ...prevChat,
+            { type: 'bot', text: questionData[questionIndex], time: currentTime },
+          ]);
+          setQuestionIndex(questionIndex + 1);
+        }, 1000); // 1초 후 실행
       }
 
       // 사용자 응답값을 저장
@@ -304,18 +310,6 @@ function ChatBot() {
     }
   }
 
-
-  // 페이지 새로고침 버튼 클릭 시 초기화
-  function handleRefresh() {
-    // 현재 채팅 및 사용자 입력 초기화
-    setChat([]);
-    setUserInput('');
-
-    // 환영 메시지 추가 및 채팅창 초기화
-    const welcomeMessage = '자기소개서에 대해 도움을 드리겠습니다. 생성, 수정 중 하나를 입력해주세요!';
-    setChat([{ type: 'bot', text: welcomeMessage }]);
-  }
-
   // 모달 닫기 함수
   function closeModal() {
     // 모달 및 로딩 상태를 닫거나 초기화
@@ -335,15 +329,12 @@ function ChatBot() {
       <div className="inputContainer">
         <input
           type="text"
-          placeholder="질문을 입력해주세요!"
+          placeholder="내용을 작성해주세요!"
           value={userInput}
           onChange={handleInputChange}
           onKeyDown={handleInputKeyDown}
         />
         <button onClick={handleSendButtonClick}>전송</button>
-        <button onClick={handleRefresh} className="refreshButton">
-          새로고침
-        </button>
       </div>
 
       {/* 모달 표시 */}
