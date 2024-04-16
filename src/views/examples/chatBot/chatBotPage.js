@@ -86,11 +86,14 @@ function ChatBot() {
               ...formattedQuestionList.map((question, index) => ({ type: 'bot', text: <div key={index} dangerouslySetInnerHTML={{ __html: question }} />, time: currentTime })),
             ]);
             setQuestionCount(2); // 두 번째 질문으로 넘어가기 위한 상태 변경
+
           } else if (userInput === '수정') {
             const formattedQuestionList = data1.questionList.map((question) => question.replace(/\n/g, '<br>'));
             console.log(data1.questionList)
             // '수정' 모드에서 첫 번째 질문을 채팅창에 표시
+            setQuestionCount(4);
             handleSendMessageModify(formattedQuestionList); // 수정 모드일 때만 handleSendMessageModify() 호출
+            setUserResponses([]);
           }
         }, 500); // 0.5초 지연
       })
@@ -116,12 +119,43 @@ function ChatBot() {
         ]);
         setCurrentMessageIndex(currentMessageIndex + 1); // 다음 메시지를 위해 인덱스 증가
         setFormattedQuestionList(formattedQuestionList);
-        setQuestionCount(4);
+        
       } else {
         // 모든 메시지가 표시된 후의 처리
         console.log('모든 수정 질문에 대한 응답이 완료되었습니다.');
+
+        let allJson = {
+          question: userResponses, // '수정' 모드에 필요한 데이터 구조
+        };
+
+        setLoading(true); // 로딩 상태 설정
+
+        let apiUrl = 'http://orion.mokpo.ac.kr:8582/api/set-unifot'; // '수정' 모드에 맞는 API 엔드포인트
+
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': "application/json",
+          },
+          body: JSON.stringify(allJson),
+        })
+          .then(response => response.json())
+          .then(data => {
+            // 서버로부터의 응답 처리
+            const formattedAnswer = data.answer.split('\n').map((line, index) => (
+              <React.Fragment key={index}>
+                {line}
+                <br />
+              </React.Fragment>
+            ));
+
+            // 채팅창에 서버 응답 추가
+            setChat((prevChat) => [...prevChat, { type: 'bot', text: formattedAnswer }]);
+          })
+          .catch((error) => console.error('Error:', error))
+          .finally(() => setLoading(false)); // 로딩 상태 해제
       }
-    }, 1000); // 1초 지연
+    }, 1000); // 1초 지연으로 모든 응답 후에 실행
 
     // 사용자 응답을 userResponses 상태에 추가
     if (userInput.trim()) {
@@ -129,51 +163,8 @@ function ChatBot() {
     }
 
     setUserInput('');
-
-    // 모든 질문에 대한 응답이 완료된 경우
-    if (currentMessageIndex === formattedQuestionList.length) {
-      // 사용자의 응답이 모두 완료되었으므로 서버에 전송
-      // 로딩 상태 설정
-      setLoading(true);
-
-      let allJson = {
-        // '수정' 모드에 필요한 데이터 구조
-        question: userResponses,
-      };
-
-      // 서버 주소를 담을 변수 선언
-      let apiUrl = 'http://orion.mokpo.ac.kr:8582/api/set-unifot'; // '수정' 모드에 맞는 API 엔드포인트
-
-      // apiUrl을 사용하여 서버에 POST 요청 보내기
-      fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': "application/json",
-        },
-        body: JSON.stringify(allJson),
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data); // 서버로부터의 응답 처리
-          console.log(apiUrl)
-          // JSX에서 개행 문자를 <br>로 바꾸어 출력
-          const formattedAnswer = data.answer.split('\n').map((line, index) => (
-            <React.Fragment key={index}>
-              {line}
-              <br />
-            </React.Fragment>
-          ));
-
-          // 채팅창에 서버 응답 추가  
-          setChat((prevChat) => [...prevChat, { type: 'bot', text: formattedAnswer }]);
-        })
-        .catch((error) => console.error('Error:', error))
-        .finally(() => {
-          setLoading(false); // API 호출이 완료되면 로딩 상태를 false로 설정
-        });
-    }
   }
-
+  
   function handleSendMessageSecond() {
     if (!userInput.trim()) {
       return;
@@ -220,6 +211,14 @@ function ChatBot() {
         { type: 'user', text: userInput, time: currentTime },
       ]);
 
+      // 사용자 응답값을 저장
+      setUserResponses((prevResponses) => [
+        ...prevResponses,
+        userInput,
+      ]);
+
+      setUserInput('');
+
       // 다음 질문이 있는 경우 해당 메시지 추가
       if (questionIndex < questionData.length) {
         setTimeout(() => { // 1초 지연을 위해 setTimeout 사용
@@ -232,14 +231,6 @@ function ChatBot() {
         }, 1000); // 1초 후 실행
       }
 
-      // 사용자 응답값을 저장
-      setUserResponses((prevResponses) => [
-        ...prevResponses,
-        userInput,
-      ]);
-
-      setUserInput('');
-
       // 마지막 질문에 도달한 경우 서버로 전송
       if (questionIndex === questionData.length) {
         // allJson 데이터 구조를 '생성'과 '수정' 모드에 따라 다르게 준비
@@ -251,6 +242,8 @@ function ChatBot() {
 
         // 로딩 상태 설정
         setLoading(true);
+
+        console.log(allJson)
 
         // 서버 주소를 담을 변수 선언
         let apiUrl = '';
