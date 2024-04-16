@@ -40,6 +40,54 @@ function FullAnal() {
                         admissionProbability: "90",
                         category: "여유",
                     },
+                    {
+                        school: "목포대학교",
+                        major: "융합소프트웨어학과",
+                        admissionProbability: "87",
+                        category: "여유",
+                    },
+                    {
+                        school: "건양대학교",
+                        major: "정보보안학과",
+                        admissionProbability: "92",
+                        category: "여유",
+                    },
+                    {
+                        school: "순천대학교",
+                        major: "토목공학과",
+                        admissionProbability: "89",
+                        category: "여유",
+                    },
+                    {
+                        school: "순천대학교",
+                        major: "에너지화학공학과",
+                        admissionProbability: "97",
+                        category: "여유",
+                    },
+                    {
+                        school: "순천대학교",
+                        major: "건축공학과",
+                        admissionProbability: "86",
+                        category: "여유",
+                    },
+                    {
+                        school: "군산대학교",
+                        major: "화학공학과",
+                        admissionProbability: "88",
+                        category: "여유",
+                    },
+                    {
+                        school: "조선대학교",
+                        major: "생명공학과",
+                        admissionProbability: "91",
+                        category: "여유",
+                    },
+                    {
+                        school: "군산대학교",
+                        major: "조선해양공학과",
+                        admissionProbability: "98",
+                        category: "여유",
+                    },
                 ];
                 break;
             case "적절":
@@ -1125,7 +1173,7 @@ function FullAnal() {
                         admissionProbability: "67",
                         category: "적절",
                     },
-
+                    */
                 ];
                 break;
             case "도전":
@@ -1160,7 +1208,6 @@ function FullAnal() {
                         admissionProbability: "52",
                         category: "도전",
                     },
-                    */
                 ];
                 break;
             case "위험":
@@ -1327,7 +1374,7 @@ function FullAnal() {
                                     <span className="progressText">{item.admissionProbability}%</span>
                                 </div>
                             </div>
-                            <div className={`box red-text`}>{item.category}</div>
+                            <div className={`box category-${getColorClass(item.category)}`}>{item.category}</div>
                         </div>
                     ))}
                 </div>

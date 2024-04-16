@@ -149,6 +149,22 @@
   margin: 5px;
 }
 
+.category-blue {
+  color: blue;
+}
+
+.category-lime {
+  color: limegreen;
+}
+
+.category-orange {
+  color: orange;
+}
+
+.category-red {
+  color: red;
+}
+
 /* progressBar 스타일 */
 .progressBarContainer {
   width: 20%;
@@ -182,10 +198,6 @@
 .progressBar.red {
   background-color: #ff0000; /* 빨간색 */
   color: black;
-}
-
-.red-text {
-  color: red;
 }
 
 .previousButton {
