@@ -12,7 +12,7 @@ const Modal = ({ closeModal }) => {
           </button>
         </div>
         <div className="modalBody">
-          <p className='p1'>자기소개서를 생성 중입니다! 잠시만 기다려주세요!</p>
+          <p className='p1'>자기소개서를 완성하고 있는 중입니다! 잠시만 기다려주세요!</p>
         </div>
       </div>
     </div>
