@@ -99,7 +99,7 @@ function Register() {
                 <Card className="bg-secondary shadow border-0">
                   <CardHeader className="bg-white pb-5">
                     <div className="text-muted text-center mb-3">
-                      <small>Sign up with</small>
+                      <small>SNS로 회원가입 하기</small>
                     </div>
                     <div className="text-center">
                       <Button
@@ -140,7 +140,7 @@ function Register() {
                   </CardHeader>
                   <CardBody className="px-lg-5 py-lg-5">
                     <div className="text-center text-muted mb-4">
-                      <small>Or sign up with credentials</small>
+                      <small>Uniform 회원가입 하기</small>
                     </div>
                     <Form role="form">
                       <FormGroup>

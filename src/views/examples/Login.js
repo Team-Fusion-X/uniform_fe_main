@@ -89,7 +89,7 @@ function Login() {
                 <Card className="bg-secondary shadow border-0">
                   <CardHeader className="bg-white pb-5">
                     <div className="text-muted text-center mb-3">
-                      <small>Sign in with</small>
+                      <small>SNS로 로그인 하기</small>
                     </div>
                     <div className="btn-wrapper text-center">
                       <Button
@@ -124,7 +124,7 @@ function Login() {
                   </CardHeader>
                   <CardBody className="px-lg-5 py-lg-5">
                     <div className="text-center text-muted mb-4">
-                      <small>Or sign in with credentials</small>
+                      <small>Uniform 로그인</small>
                     </div>
                     <Form role="form">
                       <FormGroup className="mb-3">
@@ -192,16 +192,19 @@ function Login() {
                       href="#pablo"
                       onClick={(e) => e.preventDefault()}
                     >
-                      <small>Forgot password?</small>
+                      <small>아이디/비밀번호 찾기</small>
                     </a>
                   </Col>
                   <Col className="text-right" xs="6">
                     <a
                       className="text-light"
                       href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate('/register-page');
+                      }}
                     >
-                      <small>Create new account</small>
+                      <small>회원가입 하기</small>
                     </a>
                   </Col>
                 </Row>
