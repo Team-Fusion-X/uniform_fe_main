@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Map, MarkerClusterer, MapMarker, ZoomControl, CustomOverlayMap } from "react-kakao-maps-sdk";
+import SearchBar from './SearchBar';
 import { CgClose } from "react-icons/cg";
 import red_marker from './image/red.png';
 import blue_marker from './image/blue.png';
@@ -13,8 +14,25 @@ const UMap = () => {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const mapRef = useRef(null);
     const maxLevel = 13;
+    // Search Bar 관련 설정
+    const handleSearch = (searchTerm) => {
+        if (!mapRef.current) return; // 지도 인스턴스가 없다면 함수 종료
+        const ps = new window.kakao.maps.services.Places(); // 장소 검색 객체
 
-    // 마커 이미지를 결정하는 함수
+        ps.keywordSearch(searchTerm, (data, status) => {
+            if (status === window.kakao.maps.services.Status.OK) {
+                const bounds = new window.kakao.maps.LatLngBounds();
+                data.forEach((place) => {
+                    bounds.extend(new window.kakao.maps.LatLng(place.y, place.x));
+                });
+                mapRef.current.setBounds(bounds); // 검색된 장소를 포함하는 지도 범위로 이동
+            } else {
+                console.error("검색 결과가 없습니다.");
+            }
+        });
+    };
+
+    // 합격률에 따라 마커 이미지를 결정하는 함수
     const getMarkerImage = (passValue) => {
         if (passValue <= 25) return red_marker;
         if (passValue <= 45) return yellow_marker;
@@ -24,61 +42,84 @@ const UMap = () => {
 
     useEffect(() => {
         const positionsArray = data.map(item => ({
-            lat: item.lat,
-            lng: item.lng,
+            lat: item.lat, // 위도
+            lng: item.lng, // 경도
+            pass: item.pass, // 합격률
             image: getMarkerImage(item.pass), // pass 값에 따라 이미지를 결정
         }));
         setPositions(positionsArray);
     }, []);
 
+    const clusterStyles = [
+        {
+            width: '50px',
+            height: '50px',
+            background: '#C8C8FF', // 클러스터 색상
+            borderRadius: '25px', // 원형으로 표시
+            color: '#000', // 글씨 색상은 흰색
+            textAlign: 'center',
+            fontWeight: 'bold',
+            lineHeight: '50px' // 세로 정렬을 위해 lineHeight를 height와 같게 설정
+        }
+    ];
+
     return (
         <>
-            <Map
-                ref={mapRef}
-                center={{ lat: 35.688291717895794, lng: 127.96375234744477 }}
-                style={{ width: "100%", height: "550px" }}
-                level={13}
-                onZoomChanged={() => {
-                    if (mapRef.current) {
-                        const currentLevel = mapRef.current.getLevel();
-                        if (currentLevel > maxLevel) {
-                            mapRef.current.setLevel(maxLevel);
-                        }
-                    }
-                    setClusterLevel(10);
-                    setSelectedMarker(null);
-                }}
-            >
-                <MarkerClusterer
-                    averageCenter={true}
-                    minLevel={10}
-                >
-                    {positions.map((pos, index) => (
-                        <MapMarker
-                            key={index}
-                            position={pos}
-                            image={{
-                                src: pos.image, // 사용자 정의 마커 이미지
-                                size: {
-                                    width: 35,
-                                    height: 35
+            <div style={{ display: "flex", height: "550px" }}>
+                <div style={{ width: "30%", background: "#f9f9f9", padding: "20px" }}>
+                    {/* 왼쪽 패널 */}
+                    <SearchBar onSearch={handleSearch} />
+                </div>
+                <div style={{ width: "70%" }}>
+                    <Map
+                        ref={mapRef}
+                        center={{ lat: 35.688291717895794, lng: 127.96375234744477 }}
+                        style={{ width: "100%", height: "550px" }}
+                        level={13}
+                        onZoomChanged={() => {
+                            if (mapRef.current) {
+                                const currentLevel = mapRef.current.getLevel();
+                                if (currentLevel > maxLevel) {
+                                    mapRef.current.setLevel(maxLevel);
                                 }
-                            }}
-                            onClick={() => setSelectedMarker({ latlng: pos })}
-                        />
-                    ))}
-                </MarkerClusterer>
-                {selectedMarker && (
-                    <EventMarkerContainer
-                        position={selectedMarker.latlng}
-                        university={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).university}
-                        location={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).location}
-                        url={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).home_url}
-                        logo={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).logo}
-                    />
-                )}
-                <ZoomControl position="RIGHT_BOTTOM" />
-            </Map>
+                            }
+                            setClusterLevel(10);
+                            setSelectedMarker(null);
+                        }}
+                    >
+                        <MarkerClusterer
+                            averageCenter={true}
+                            minLevel={10}
+                            styles={clusterStyles}
+                        >
+                            {positions.map((pos, index) => (
+                                <MapMarker
+                                    key={index}
+                                    position={pos}
+                                    image={{
+                                        src: pos.image, // 사용자 정의 마커 이미지
+                                        size: {
+                                            width: 35,
+                                            height: 35
+                                        }
+                                    }}
+                                    onClick={() => setSelectedMarker({ latlng: pos })}
+                                />
+                            ))}
+                        </MarkerClusterer>
+                        {selectedMarker && (
+                            <EventMarkerContainer
+                                position={selectedMarker.latlng}
+                                university={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).university}
+                                location={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).location}
+                                url={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).home_url}
+                                logo={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).logo}
+                            />
+                        )}
+                        <ZoomControl position="RIGHT_BOTTOM" />
+                    </Map>
+                </div>
+            </div>
         </>
     );
 };
