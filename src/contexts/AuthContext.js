@@ -12,23 +12,27 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const logout = () => {
+    setAuth({ isLoggedIn: false, sessionId: null });
+    localStorage.removeItem('sessionId');
+    navigate('/Landing-page');
+  };
+
   useEffect(() => {
-    if (location.pathname === "/landing-page") { // 메인 페이지에서만 세션 만료 타이머 비활성화
+    if (location.pathname === "/landing-page") {
       return;
     }
 
     const sessionTimeout = setTimeout(() => {
       alert('세션 만료됨. 다시 로그인 해주세요.');
-      setAuth({ isLoggedIn: false, sessionId: null });
-      localStorage.removeItem('sessionId');
-      navigate('/login-page');
+      logout(); // 로그아웃 함수 호출
     }, 1800000); // 30분
 
     return () => clearTimeout(sessionTimeout);
-  }, [navigate, location.pathname]); // location.pathname 의존성 추가
+  }, [navigate, location.pathname, logout]); // logout 의존성 추가
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider value={{ auth, setAuth, logout }}>
       {children}
     </AuthContext.Provider>
   );

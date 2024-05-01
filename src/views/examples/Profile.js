@@ -1,32 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button, Card, Container, Row, Col } from "reactstrap";
-import { useNavigate } from 'react-router-dom';
-
-import { useAuth } from 'contexts/AuthContext.js';
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import SimpleFooter from "components/Footers/SimpleFooter.js";
 import Record from '../IndexSections/record.js';
+import useAuthCheck from '../../components/hooks/UseAuthCheck.js'; // 커스텀 훅 임포트
 
 function Profile() {
-  const { setAuth, auth } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    
-    // 페이지 로드 시 스크롤을 최상단으로 이동
-    document.documentElement.scrollTop = 0;
-    document.scrollingElement.scrollTop = 0;
-    refMain.current.scrollTop = 0;
-
-    // 로그인 상태가 아닐 때 로그인 페이지로 리디렉트
-    if (!auth.isLoggedIn) {
-      alert("세션이 만료되었습니다.")
-      navigate('/login-page');
-    }
-  }, [auth.isLoggedIn, navigate]);  // 의존성 배열에 auth.isLoggedIn과 navigate 추가
-
-
-  const refMain = React.createRef();
+  const refMain = useRef(null);
+  useAuthCheck(refMain); // 커스텀 훅 호출
 
   return (
     <>
@@ -68,7 +49,7 @@ function Profile() {
                         <img
                           alt="..."
                           className="rounded-circle"
-                          src={require("assets/img/theme/team-4-800x800.jpg")}
+                          src={require("assets/img/theme/user.png")}
                         />
                       </a>
                     </div>
