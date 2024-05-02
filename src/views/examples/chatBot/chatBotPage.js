@@ -54,8 +54,14 @@ function ChatBot() {
 
   // 메시지 전송 버튼 클릭 시 호출되는 함수
   function handleSendMessage() {
-    // 입력값이 공백인 경우 함수 종료
+    // 예외 처리
     if (!userInput.trim()) {
+      alert('내용을 입력해주세요!');
+      setUserInput('');
+      return;
+    } else if (userInput !== '생성' && userInput !== '수정') {
+      alert('"생성" 또는 "수정"만 입력해주세요!');
+      setUserInput('');
       return;
     }
 
@@ -176,8 +182,15 @@ function ChatBot() {
 
   function handleSendMessageSecond() {
     if (!userInput.trim()) {
+      alert('내용을 입력해주세요!');
+      setUserInput('');
+      return;
+    } else if (userInput !== '1' && userInput !== '2') {
+      alert('숫자 1 또는 2만 입력해주세요!');
+      setUserInput('');
       return;
     }
+
     setQuestionDataCount(userInput);
     setQuestionCount(3);
     let tmp = userInput;
