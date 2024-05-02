@@ -6,7 +6,7 @@ import red_marker from './image/red.png';
 import blue_marker from './image/blue.png';
 import green_marker from './image/green.png';
 import yellow_marker from './image/yellow.png';
-import data from './test_user_data.json';
+import data from './json/test_user_data.json';
 
 const UMap = () => {
     const [clusterLevel, setClusterLevel] = useState(10);
