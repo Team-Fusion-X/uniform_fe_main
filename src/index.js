@@ -10,6 +10,8 @@ import Index from "views/Index.js";
 import FullAnalysis from "views/examples/analysis/FullAnalysis.js";
 import IntensiveAnalysis from "views/examples/analysis/IntensiveAnalysis/IntensiveAnalysis.js";
 import MapAnalysis from "views/examples/analysis/MapAnalysis.js";
+import IntensiveAnalysis from "views/examples/analysis/IntensiveAnalysis.js";
+import MapAnalysis from "views/examples/analysis/Map/MapAnalysis.js";
 import Landing from "views/examples/Landing.js";
 import Login from "views/examples/Login.js";
 import Profile from "views/examples/Profile.js";
