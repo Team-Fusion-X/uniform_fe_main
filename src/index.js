@@ -8,7 +8,7 @@ import "assets/scss/argon-design-system-react.scss?v1.1.0";
 
 import Index from "views/Index.js";
 import FullAnalysis from "views/examples/analysis/FullAnalysis.js";
-import IntensiveAnalysis from "views/examples/analysis/IntensiveAnalysis.js";
+import IntensiveAnalysis from "views/examples/analysis/IntensiveAnalysis/IntensiveAnalysis.js";
 import MapAnalysis from "views/examples/analysis/MapAnalysis.js";
 import Landing from "views/examples/Landing.js";
 import Login from "views/examples/Login.js";
