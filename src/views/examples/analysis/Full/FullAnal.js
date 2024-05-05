@@ -1,7 +1,126 @@
 import React, { useState, useEffect } from "react";
+import Select from 'react-select';
 import "./FullAnal.css";
 
 function FullAnal() {
+    let searchData = [
+        {
+            "계열": "공학",
+            "대학": "서울대학교",
+            "학과": "컴퓨터공학과"
+        },
+        {
+            "계열": "자연과학",
+            "대학": "연세대학교",
+            "학과": "물리학과"
+        },
+        {
+            "계열": "예술",
+            "대학": "홍익대학교",
+            "학과": "미술학과"
+        },
+        {
+            "계열": "공학",
+            "대학": "포항공과대학교",
+            "학과": "기계공학과"
+        },
+        {
+            "계열": "의학",
+            "대학": "경희대학교",
+            "학과": "의학과"
+        },
+        {
+            "계열": "인문과학",
+            "대학": "고려대학교",
+            "학과": "철학과"
+        },
+        {
+            "계열": "사회과학",
+            "대학": "서강대학교",
+            "학과": "심리학과"
+        },
+        {
+            "계열": "경영학",
+            "대학": "한양대학교",
+            "학과": "경영학과"
+        },
+        {
+            "계열": "예술",
+            "대학": "서울예술대학교",
+            "학과": "연극학과"
+        },
+        {
+            "계열": "자연과학",
+            "대학": "서울과학기술대학교",
+            "학과": "화학과"
+        }
+    ]
+
+    const [selectedDivision, setSelectedDivision] = useState(null);
+    const [selectedUniversity, setSelectedUniversity] = useState(null);
+    const [selectedDepartment, setSelectedDepartment] = useState(null);
+
+    const [displayText, setDisplayText] = useState({
+        division: '',
+        university: '',
+        department: ''
+    });
+
+    // 각 카테고리에 대한 옵션 생성
+    const divisionOptions = Array.from(new Set(searchData.map(data => data.계열))).map(division => ({ value: division, label: division }));
+    const universityOptions = Array.from(new Set(searchData.map(data => data.대학))).map(university => ({ value: university, label: university }));
+    const departmentOptions = Array.from(new Set(searchData.map(data => data.학과))).map(department => ({ value: department, label: department }));
+
+    // 선택한 옵션을 임시 상태에 저장
+    const handleDivisionChange = selectedOption => {
+        setSelectedDivision(selectedOption);
+    };
+
+    const handleUniversityChange = selectedOption => {
+        setSelectedUniversity(selectedOption);
+    };
+
+    const handleDepartmentChange = selectedOption => {
+        setSelectedDepartment(selectedOption);
+    };
+
+    // 검색 버튼 클릭 시 displayText 상태 업데이트
+    const handleSearchClick = () => {
+        setDisplayText({
+            division: selectedDivision ? selectedDivision.label : '',
+            university: selectedUniversity ? selectedUniversity.label : '',
+            department: selectedDepartment ? selectedDepartment.label : ''
+        });
+    };
+
+    // Select 컴포넌트에 적용할 스타일 정의
+    const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            minHeight: '35px', // 컨트롤의 높이 조정
+            height: '35px', // 컨트롤의 높이를 고정
+            margin: '10px'
+        }),
+        placeholder: (defaultStyles) => ({
+            ...defaultStyles,
+            fontSize: '12px', // Placeholder 글자 크기 조정
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            fontSize: '12px', // 옵션의 글자 크기 조정
+            padding: '8px', // 옵션의 패딩 조정
+        }),
+        menu: (provided) => ({
+            ...provided,
+            fontSize: '12px', // 드롭다운 메뉴의 글자 크기 조정
+        }),
+        singleValue: (provided) => ({
+            ...provided,
+            fontSize: '12px', // 선택된 값의 글자 크기 조정
+        })
+    };
+
+
     let newData = [
         {
             school: "목포대학교",
@@ -647,7 +766,7 @@ function FullAnal() {
         },
         */
     ];
-    
+
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -715,11 +834,11 @@ function FullAnal() {
                 endPage = currentPage + 5;
             }
         }
-    
+
         return (
             <div className="pageNumbers">
                 {Array.from({ length: (endPage + 1) - startPage }, (_, i) => startPage + i).map(number => (
-                    <span key={number} 
+                    <span key={number}
                         className={`pageNumber ${currentPage === number ? 'active' : ''}`}
                         onClick={() => handlePageClick(number)}
                         style={{ cursor: 'pointer', margin: '0 10px' }}>
@@ -729,7 +848,7 @@ function FullAnal() {
             </div>
         );
     };
-    
+
     const startIndex = (currentPage - 1) * itemsPerPage;
 
     const getColorClass = (category) => {
@@ -749,15 +868,60 @@ function FullAnal() {
 
     return (
         <div className="fullAnalLayout">
+            <div className="searchLayout">
+                <div className="searchLineInputContainer">
+                    <span className="submitText">희망 계열:</span>
+                    <Select
+                        value={selectedDivision}
+                        onChange={handleDivisionChange}
+                        options={divisionOptions}
+                        placeholder="키워드를 입력하세요!"
+                        isClearable={true}
+                        isSearchable={true}
+                        styles={customStyles}
+                        noOptionsMessage={() => null}
+                    />
+                </div>
+                <div className="searchUniversityInputContainer">
+                    <span className="submitText">희망 대학:</span>
+                    <Select
+                        value={selectedUniversity}
+                        onChange={handleUniversityChange}
+                        options={universityOptions}
+                        placeholder="키워드를 입력하세요!"
+                        isClearable={true}
+                        isSearchable={true}
+                        styles={customStyles}
+                        noOptionsMessage={() => null}
+                    />
+                </div>
+                <div className="searchDepartmentInputContainer">
+                    <span className="submitText">희망 학과:</span>
+                    <Select
+                        value={selectedDepartment}
+                        onChange={handleDepartmentChange}
+                        options={departmentOptions}
+                        placeholder="키워드를 입력하세요!"
+                        isClearable={true}
+                        isSearchable={true}
+                        styles={customStyles}
+                        noOptionsMessage={() => null}
+                    />
+                </div>
+                <button className="searchButton" onClick={handleSearchClick}></button>
+            </div>
             <div className="contentLayout">
-                {/* 성적 입력 칸 레이아웃 */}
-                <div className="gradeInputContainer">
-                    <span className="submitText">내 성적</span>
-                    <input type="text" placeholder="내 등급" />
+                <div className="lineInputContainer">
+                    <span className="submitText">희망 계열:</span>
+                    <span className="inputText">{displayText.division}</span>
+                </div>
+                <div className="universityInputContainer">
+                    <span className="submitText">희망 대학:</span>
+                    <span className="inputText">{displayText.university}</span>
                 </div>
                 <div className="departmentInputContainer">
-                    <span className="submitText">희망 학과</span>
-                    <input type="text" placeholder="희망 학과" />
+                    <span className="submitText">희망 학과:</span>
+                    <span className="inputText">{displayText.department}</span>
                 </div>
 
                 {/* 버튼 4개가 들어있는 컨테이너 */}
@@ -777,21 +941,21 @@ function FullAnal() {
                 </div>
             </div>
             <div className="contentBelow">
-    <div className="fourColumns">
-        {filteredData.slice(startIndex, startIndex + itemsPerPage).map((item, index) => (
-            <div className="column" key={index}>
-                <div className={`box ${getColorClass(item.category)}`}>{item.school}</div>
-                <div className={`box ${getColorClass(item.category)}`}>{item.major}</div>
-                <div className="progressBarContainer">
-                    <div className={`progressBar ${getColorClass(item.category)}`} style={{ width: `${item.admissionProbability}%` }}>
-                        <span className="progressText">{item.admissionProbability}%</span>
-                    </div>
+                <div className="fourColumns">
+                    {filteredData.slice(startIndex, startIndex + itemsPerPage).map((item, index) => (
+                        <div className="column" key={index}>
+                            <div className={`box ${getColorClass(item.category)}`}>{item.school}</div>
+                            <div className={`box ${getColorClass(item.category)}`}>{item.major}</div>
+                            <div className="progressBarContainer">
+                                <div className={`progressBar ${getColorClass(item.category)}`} style={{ width: `${item.admissionProbability}%` }}>
+                                    <span className="progressText">{item.admissionProbability}%</span>
+                                </div>
+                            </div>
+                            <div className={`box category-${getColorClass(item.category)}`}>{item.category}</div>
+                        </div>
+                    ))}
                 </div>
-                <div className={`box category-${getColorClass(item.category)}`}>{item.category}</div>
             </div>
-        ))}
-    </div>
-</div>
 
             {/* 이전 버튼과 다음 버튼 사이에 페이지 수 표시 */}
             <div className="pagination">
