@@ -1,21 +1,98 @@
 /* fullAnalLayout 스타일 */
 .fullAnalLayout {
-  width: 1300px; /* 레이아웃의 너비 설정 */
+  width: 1500px; /* 레이아웃의 너비 설정 */
   height: 1150px; /* 레이아웃의 높이 설정 */
   background-color: white;
   /*background-color: #d8e8f9;*/
   padding: 20px; /* 내부 여백 설정 */
   box-sizing: border-box; /* 내부 여백을 요소의 전체 크기에 포함시킴 */
-  margin: auto;
+  margin-left: 100px;
+  margin-right: 100px;
   border-radius: 15px;
-  display: flex; /* 콘텐츠를 가운데 정렬하기 위해 flex 사용 */
+  /*
+  display: flex; /* 콘텐츠를 가운데 정렬하기 위해 flex 사용
+  */
   justify-content: center; /* 가로 중앙 정렬 */
   align-items: center; /* 세로 중앙 정렬 */
   flex-direction: column; /* 하위 요소들을 세로로 배치 */
 }
 
+/* searchLayout 스타일 */
+.searchLayout {
+  height: 60px;
+  display: flex;
+  justify-content: space-between; /* 좌우로 정렬 */
+  align-items: center;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 70%; /* 부모 요소 fullAnalLayout의 너비의 70% */
+  margin-bottom: 10px; /* contentLayout과 contentBelow 사이의 간격 설정 */
+}
+
+.searchLineInputContainer {
+  width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
+  margin-right: 15px;
+  margin-top: 20px;
+  margin-left: 5px;
+}
+
+.searchUniversityInputContainer {
+  width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
+  margin-right: 15px;
+  margin-top: 20px;
+  margin-left: 5px;
+}
+
+.searchDepartmentInputContainer {
+  width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
+  margin-right: 15px;
+  margin-top: 20px;
+  margin-left: 5px;
+}
+
+/* 검색 버튼 스타일 */
+.searchLayout button {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url('./images/image.png'); 
+  background-size: cover;
+  background-color: transparent;
+  border: none;
+  margin-right: 5px;
+  margin-top: 10px;
+}
+
+/* 희망 계열, 희망 학교, 희망 학과 텍스트 스타일 */
+/*
+.searchLayout .searchInput[type="text"] {
+  width: 120px;
+  height: 30px;
+  font-size: 11px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 0 10px;
+  margin-left: 5px;
+}
+*/
+
 /* contentLayout 스타일 */
 .contentLayout {
+  width: 1000px;
   display: flex;
   justify-content: space-between; /* 좌우로 정렬 */
   align-items: center;
@@ -25,75 +102,95 @@
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: 70%; /* 부모 요소 fullAnalLayout의 너비의 70% */
-  margin-bottom: 20px; /* contentLayout과 contentBelow 사이의 간격 설정 */
-  height: 100px;
+  margin-bottom: 10px; /* contentLayout과 contentBelow 사이의 간격 설정 */
+  height: 80px;
 }
 
-/* 성적 입력 컨테이너 스타일 */
-.gradeInputContainer {
-  width: 200px;
-
+/* 희망 계열 입력 컨테이너 스타일 */
+.lineInputContainer {
+  width: 1000px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 3px;
   margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
-  margin-right: 5px;
+  margin-right: 15px;
   margin-top: 20px;
+  margin-left: 5px;
 }
 
-/* 성적 입력 칸 스타일 */
-.gradeInputContainer input[type="text"] {
-  width: 40px;
+/* 희망 계열 입력 칸 스타일 */
+.lineInputContainer input[type="text"] {
+  width: 500px;
   height: 40px;
-  border: 1px solid #ccc;
+  border: 1px solid white;
   border-radius: 5px;
   padding: 0 10px;
 }
 
-/* 성적 및 희망학과 텍스트 스타일 */
-.submitText {
-  padding: 10px 20px;
-  color: #060606;
+/* 희망 대학 입력 컨테이너 스타일 */
+.universityInputContainer {
+  width: 1300px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
+  margin-right: 15px;
+  margin-top: 20px;
+}
+
+/* 희망 대학 입력 칸 스타일 */
+.universityInputContainer input[type="text"] {
+  width: 700px;
+  height: 40px;
+  border: 1px solid white;
   border-radius: 5px;
+  padding: 0 10px;
 }
 
 /* 희망 학과 입력 컨테이너 스타일 */
 .departmentInputContainer {
-  width: 350px;
-
+  width: 1500px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 3px;
   margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
-  margin-right: 5px;
+  margin-right: 50px;
   margin-top: 20px;
 }
 
 /* 희망 학과 입력 칸 스타일 */
 .departmentInputContainer input[type="text"] {
-  width: 150px;
+  width: 1000px;
   height: 40px;
-  border: 1px solid #ccc;
+  border: 1px solid white;
   border-radius: 5px;
   padding: 0 10px;
+}
+
+/* 희망 계열 및 희망 학과 텍스트 스타일 */
+.inputText {
+  padding: 10px;
+  color: blue;
+  font-weight: bolder;
+  border-radius: 5px;
 }
 
 /* 버튼 컨테이너 스타일 */
 .buttonContainer {
   width: 350px;
-  
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
   margin-bottom: 20px; /* 다음 요소와의 간격을 설정 */
   margin-top: 30px;
+  margin-right: 5px;
   justify-content: flex-end;
 }
 
 /* 카테고리 버튼 스타일 */
 .categoryButton {
-  width: 70px;
-  padding: 10px 20px;
+  width: 60px;
+  padding: 10px;
   background-color: #4f9cee;
   color: #ffffff;
   border: none;
@@ -131,8 +228,8 @@
 
 /* column 스타일 */
 .column {
-  display: flex;
-  width: 840px; 
+  width: 980px;
+  display: flex; 
   height: 80px;
   background-color: #fff; /* 배경색 설정 */
   padding: 20px; /* 내부 여백 설정 */
@@ -173,6 +270,7 @@
   border-radius: 10px;
   overflow: hidden;
   margin-top: 10px;
+  margin-left: 90px;
 }
 
 .progressBar {
