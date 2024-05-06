@@ -1,19 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Map, MarkerClusterer, MapMarker, ZoomControl, CustomOverlayMap } from "react-kakao-maps-sdk";
-import SearchBar from './SearchBar';
+import { Map, MarkerClusterer, MapMarker, ZoomControl } from "react-kakao-maps-sdk";
 import { CgClose } from "react-icons/cg";
+// image and data
 import red_marker from './image/red.png';
 import blue_marker from './image/blue.png';
 import green_marker from './image/green.png';
 import yellow_marker from './image/yellow.png';
 import data from './json/test_user_data.json';
+//pages
+import SearchBar from './SearchBar';
+import MajorSelect from './MajorSelect';
 
 const UMap = () => {
     const [clusterLevel, setClusterLevel] = useState(10);
     const [positions, setPositions] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
+    const [selectedMajors, setSelectedMajors] = useState([]);
     const mapRef = useRef(null);
     const maxLevel = 13;
+
     // Search Bar 관련 설정
     const handleSearch = (searchTerm) => {
         if (!mapRef.current) return; // 지도 인스턴스가 없다면 함수 종료
@@ -32,12 +37,19 @@ const UMap = () => {
         });
     };
 
+    // MajorSelect 관련 설정
+    const handleSelectionComplete = (majors) => {
+        setSelectedMajors(majors);
+        // 선택된 전공들을 상태에 저장하고 필요한 추가 처리를 할 수 있습니다.
+        console.log('Selected majors:', majors);
+    };
+
     // 합격률에 따라 마커 이미지를 결정하는 함수
     const getMarkerImage = (passValue) => {
-        if (passValue <= 25) return red_marker;
-        if (passValue <= 45) return yellow_marker;
-        if (passValue <= 65) return green_marker;
-        return blue_marker;
+        if (passValue < 20) return red_marker;
+        if (passValue >= 20 && passValue < 50) return yellow_marker;
+        if (passValue >= 50 && passValue < 80) return green_marker;
+        if (passValue >= 80) return blue_marker;
     };
 
     useEffect(() => {
@@ -69,6 +81,7 @@ const UMap = () => {
                 <div style={{ width: "30%", background: "#f9f9f9", padding: "20px" }}>
                     {/* 왼쪽 패널 */}
                     <SearchBar onSearch={handleSearch} />
+                    <MajorSelect onSelectionComplete={handleSelectionComplete} />
                 </div>
                 <div style={{ width: "70%" }}>
                     <Map
@@ -127,14 +140,6 @@ const UMap = () => {
 const EventMarkerContainer = ({ position, university, location, url, logo }) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    // 마커 이미지를 결정하는 함수
-    const getMarkerImage = (passValue) => {
-        if (passValue <= 25) return red_marker;
-        if (passValue <= 45) return yellow_marker;
-        if (passValue <= 65) return green_marker;
-        return blue_marker;
-    };
-
     const styles = {
         overlay: {
             border: '1px solid #ddd',
@@ -176,7 +181,6 @@ const EventMarkerContainer = ({ position, university, location, url, logo }) => 
             overflow: 'hidden',
         },
         ellipsis: {
-            whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'normal', // 텍스트가 다음 줄로 넘어갈 수 있도록 설정
