@@ -69,44 +69,110 @@ function FullAnal() {
     // 각 카테고리에 대한 옵션 생성
     const divisionOptions = Array.from(new Set(searchData.map(data => data.계열))).map(division => ({ value: division, label: division }));
     const [universityOptions, setUniversityOptions] = useState([]);
-const [departmentOptions, setDepartmentOptions] = useState([]);
+    const [departmentOptions, setDepartmentOptions] = useState([]);
 
-useEffect(() => {
-    setUniversityOptions(Array.from(new Set(searchData.map(data => data.대학)))
-        .map(university => ({ value: university, label: university })));
-    setDepartmentOptions(Array.from(new Set(searchData.map(data => data.학과)))
-        .map(department => ({ value: department, label: department })));
-}, []);
+    useEffect(() => {
+        setUniversityOptions(Array.from(new Set(searchData.map(data => data.대학)))
+            .map(university => ({ value: university, label: university })));
+        setDepartmentOptions(Array.from(new Set(searchData.map(data => data.학과)))
+            .map(department => ({ value: department, label: department })));
+    }, []);
 
     // 선택한 옵션을 임시 상태에 저장
     const handleDivisionChange = selectedOption => {
         setSelectedDivision(selectedOption);
+        if (!selectedOption) {  // 선택이 지워졌을 경우
+            const allUniversities = Array.from(new Set(searchData.map(data => data.대학)))
+                .map(university => ({ value: university, label: university }));
+            const allDepartments = Array.from(new Set(searchData.map(data => data.학과)))
+                .map(department => ({ value: department, label: department }));
+
+            setUniversityOptions(allUniversities);
+            setDepartmentOptions(allDepartments);
+            setSelectedUniversity(null);
+            setSelectedDepartment(null);
+            setDisplayText({
+                division: '',
+                university: '',
+                department: ''
+            });
+            return;  // 여기서 함수 종료
+        }
+
         // 계열에 따라 대학 목록 필터링
         const filteredUniversities = searchData.filter(data => data.계열 === selectedOption.value);
         const uniqueUniversities = Array.from(new Set(filteredUniversities.map(data => data.대학)));
         const updatedUniversityOptions = uniqueUniversities.map(university => ({ value: university, label: university }));
         setUniversityOptions(updatedUniversityOptions);
+
+        // 대학 선택에 따라 학과 목록 초기화
         setSelectedUniversity(null); // 대학 선택 초기화
         setSelectedDepartment(null); // 학과 선택 초기화
         setDepartmentOptions([]); // 학과 옵션 초기화
-         const uniqueDepartments = Array.from(new Set(searchData.filter(data => data.계열 === selectedOption.value).map(data => data.학과)));
-    const updatedDepartmentOptions = uniqueDepartments.map(department => ({ value: department, label: department }));
-    setDepartmentOptions(updatedDepartmentOptions);
-    setSelectedDepartment(null); // 학과 선택 초기화
-    };    
+    };
 
     const handleUniversityChange = selectedOption => {
         setSelectedUniversity(selectedOption);
+        if (!selectedOption) {  // 선택이 지워졌을 경우
+            if (selectedDivision) {
+                // 계열이 선택되어 있다면, 계열에 따라 모든 학과를 다시 가져옴
+                const filteredDepartments = searchData.filter(data => data.계열 === selectedDivision.value)
+                    .map(data => ({ value: data.학과, label: data.학과 }));
+                const uniqueDepartments = Array.from(new Set(filteredDepartments.map(data => data.학과)));
+                const updatedDepartmentOptions = uniqueDepartments.map(department => ({ value: department, label: department }));
+                setDepartmentOptions(updatedDepartmentOptions);
+            } else {
+                // 계열도 선택되어 있지 않다면, 모든 학과를 초기 리스트로 표시
+                const allDepartments = Array.from(new Set(searchData.map(data => data.학과)))
+                    .map(department => ({ value: department, label: department }));
+                setDepartmentOptions(allDepartments);
+            }
+            setSelectedDepartment(null);
+            setDisplayText(prev => ({
+                ...prev,
+                university: '',
+                department: ''
+            }));
+            return;  // 함수 종료
+        }
         // 대학에 따라 학과 목록 필터링
         const filteredDepartments = searchData.filter(data => data.대학 === selectedOption.value);
         const uniqueDepartments = Array.from(new Set(filteredDepartments.map(data => data.학과)));
         const updatedDepartmentOptions = uniqueDepartments.map(department => ({ value: department, label: department }));
         setDepartmentOptions(updatedDepartmentOptions);
-        setSelectedDepartment(null); // 학과 선택 초기화
+        setSelectedDepartment(null);
     };
 
     const handleDepartmentChange = selectedOption => {
         setSelectedDepartment(selectedOption);
+        if (!selectedOption) { // 학과 선택이 취소될 경우
+            if (selectedDivision && selectedUniversity) {
+                // 계열과 대학이 모두 선택된 경우
+                const filteredDepartments = searchData.filter(data =>
+                    data.계열 === selectedDivision.value && data.대학 === selectedUniversity.value
+                );
+                const uniqueDepartments = Array.from(new Set(filteredDepartments.map(data => data.학과)));
+                const updatedDepartmentOptions = uniqueDepartments.map(department => ({ value: department, label: department }));
+                setDepartmentOptions(updatedDepartmentOptions);
+            } else if (selectedDivision) {
+                // 계열만 선택된 경우
+                const filteredDepartments = searchData.filter(data => data.계열 === selectedDivision.value);
+                const uniqueDepartments = Array.from(new Set(filteredDepartments.map(data => data.학과)));
+                const updatedDepartmentOptions = uniqueDepartments.map(department => ({ value: department, label: department }));
+                setDepartmentOptions(updatedDepartmentOptions);
+            } else if (selectedUniversity) {
+                // 대학만 선택된 경우
+                const filteredDepartments = searchData.filter(data => data.대학 === selectedUniversity.value);
+                const uniqueDepartments = Array.from(new Set(filteredDepartments.map(data => data.학과)));
+                const updatedDepartmentOptions = uniqueDepartments.map(department => ({ value: department, label: department }));
+                setDepartmentOptions(updatedDepartmentOptions);
+            } else {
+                // 계열과 대학이 모두 선택되지 않은 경우
+                const allDepartments = Array.from(new Set(searchData.map(data => data.학과)))
+                    .map(department => ({ value: department, label: department }));
+                setDepartmentOptions(allDepartments);
+            }
+        }
     };
 
     // 검색 버튼 클릭 시 displayText 상태 업데이트
