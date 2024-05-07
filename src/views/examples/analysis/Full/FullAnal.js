@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Select from 'react-select';
+import SearchComponent from "./SearchComponent";
 import "./FullAnal.css";
 
 function FullAnal() {
@@ -10,7 +10,7 @@ function FullAnal() {
             "학과": "컴퓨터공학과"
         },
         {
-            "계열": "자연과학",
+            "계열": "자연",
             "대학": "연세대학교",
             "학과": "물리학과"
         },
@@ -30,7 +30,7 @@ function FullAnal() {
             "학과": "의학과"
         },
         {
-            "계열": "인문과학",
+            "계열": "인문",
             "대학": "고려대학교",
             "학과": "철학과"
         },
@@ -50,7 +50,7 @@ function FullAnal() {
             "학과": "연극학과"
         },
         {
-            "계열": "자연과학",
+            "계열": "자연",
             "대학": "서울과학기술대학교",
             "학과": "화학과"
         }
@@ -68,16 +68,41 @@ function FullAnal() {
 
     // 각 카테고리에 대한 옵션 생성
     const divisionOptions = Array.from(new Set(searchData.map(data => data.계열))).map(division => ({ value: division, label: division }));
-    const universityOptions = Array.from(new Set(searchData.map(data => data.대학))).map(university => ({ value: university, label: university }));
-    const departmentOptions = Array.from(new Set(searchData.map(data => data.학과))).map(department => ({ value: department, label: department }));
+    const [universityOptions, setUniversityOptions] = useState([]);
+const [departmentOptions, setDepartmentOptions] = useState([]);
+
+useEffect(() => {
+    setUniversityOptions(Array.from(new Set(searchData.map(data => data.대학)))
+        .map(university => ({ value: university, label: university })));
+    setDepartmentOptions(Array.from(new Set(searchData.map(data => data.학과)))
+        .map(department => ({ value: department, label: department })));
+}, []);
 
     // 선택한 옵션을 임시 상태에 저장
     const handleDivisionChange = selectedOption => {
         setSelectedDivision(selectedOption);
-    };
+        // 계열에 따라 대학 목록 필터링
+        const filteredUniversities = searchData.filter(data => data.계열 === selectedOption.value);
+        const uniqueUniversities = Array.from(new Set(filteredUniversities.map(data => data.대학)));
+        const updatedUniversityOptions = uniqueUniversities.map(university => ({ value: university, label: university }));
+        setUniversityOptions(updatedUniversityOptions);
+        setSelectedUniversity(null); // 대학 선택 초기화
+        setSelectedDepartment(null); // 학과 선택 초기화
+        setDepartmentOptions([]); // 학과 옵션 초기화
+         const uniqueDepartments = Array.from(new Set(searchData.filter(data => data.계열 === selectedOption.value).map(data => data.학과)));
+    const updatedDepartmentOptions = uniqueDepartments.map(department => ({ value: department, label: department }));
+    setDepartmentOptions(updatedDepartmentOptions);
+    setSelectedDepartment(null); // 학과 선택 초기화
+    };    
 
     const handleUniversityChange = selectedOption => {
         setSelectedUniversity(selectedOption);
+        // 대학에 따라 학과 목록 필터링
+        const filteredDepartments = searchData.filter(data => data.대학 === selectedOption.value);
+        const uniqueDepartments = Array.from(new Set(filteredDepartments.map(data => data.학과)));
+        const updatedDepartmentOptions = uniqueDepartments.map(department => ({ value: department, label: department }));
+        setDepartmentOptions(updatedDepartmentOptions);
+        setSelectedDepartment(null); // 학과 선택 초기화
     };
 
     const handleDepartmentChange = selectedOption => {
@@ -92,34 +117,6 @@ function FullAnal() {
             department: selectedDepartment ? selectedDepartment.label : ''
         });
     };
-
-    // Select 컴포넌트에 적용할 스타일 정의
-    const customStyles = {
-        control: (provided) => ({
-            ...provided,
-            minHeight: '35px', // 컨트롤의 높이 조정
-            height: '35px', // 컨트롤의 높이를 고정
-            margin: '10px'
-        }),
-        placeholder: (defaultStyles) => ({
-            ...defaultStyles,
-            fontSize: '12px', // Placeholder 글자 크기 조정
-        }),
-        option: (provided, state) => ({
-            ...provided,
-            fontSize: '12px', // 옵션의 글자 크기 조정
-            padding: '8px', // 옵션의 패딩 조정
-        }),
-        menu: (provided) => ({
-            ...provided,
-            fontSize: '12px', // 드롭다운 메뉴의 글자 크기 조정
-        }),
-        singleValue: (provided) => ({
-            ...provided,
-            fontSize: '12px', // 선택된 값의 글자 크기 조정
-        })
-    };
-
 
     let newData = [
         {
@@ -868,48 +865,18 @@ function FullAnal() {
 
     return (
         <div className="fullAnalLayout">
-            <div className="searchLayout">
-                <div className="searchLineInputContainer">
-                    <span className="submitText">희망 계열:</span>
-                    <Select
-                        value={selectedDivision}
-                        onChange={handleDivisionChange}
-                        options={divisionOptions}
-                        placeholder="키워드를 입력하세요!"
-                        isClearable={true}
-                        isSearchable={true}
-                        styles={customStyles}
-                        noOptionsMessage={() => null}
-                    />
-                </div>
-                <div className="searchUniversityInputContainer">
-                    <span className="submitText">희망 대학:</span>
-                    <Select
-                        value={selectedUniversity}
-                        onChange={handleUniversityChange}
-                        options={universityOptions}
-                        placeholder="키워드를 입력하세요!"
-                        isClearable={true}
-                        isSearchable={true}
-                        styles={customStyles}
-                        noOptionsMessage={() => null}
-                    />
-                </div>
-                <div className="searchDepartmentInputContainer">
-                    <span className="submitText">희망 학과:</span>
-                    <Select
-                        value={selectedDepartment}
-                        onChange={handleDepartmentChange}
-                        options={departmentOptions}
-                        placeholder="키워드를 입력하세요!"
-                        isClearable={true}
-                        isSearchable={true}
-                        styles={customStyles}
-                        noOptionsMessage={() => null}
-                    />
-                </div>
-                <button className="searchButton" onClick={handleSearchClick}></button>
-            </div>
+            <SearchComponent
+                divisionOptions={divisionOptions}
+                universityOptions={universityOptions}
+                departmentOptions={departmentOptions}
+                selectedDivision={selectedDivision}
+                selectedUniversity={selectedUniversity}
+                selectedDepartment={selectedDepartment}
+                onDivisionChange={handleDivisionChange}
+                onUniversityChange={handleUniversityChange}
+                onDepartmentChange={handleDepartmentChange}
+                onSearchClick={handleSearchClick}
+            />
             <div className="contentLayout">
                 <div className="lineInputContainer">
                     <span className="submitText">희망 계열:</span>
