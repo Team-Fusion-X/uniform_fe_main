@@ -19,6 +19,7 @@ import {
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import SimpleFooter from "components/Footers/SimpleFooter.js";
 import Search from "./Search.js";
+import Test from "../UniversityTest.js"
 
 function IntensiveAnalysis() {
   const mainRef = useRef(null);
@@ -44,6 +45,8 @@ function IntensiveAnalysis() {
 
         <section className="section" style={{ paddingTop: '1rem', paddingBottom: '3rem' }}>
           <Container>
+          <Search/>
+          <Test/>
             <Row className="row-grid align-items-center">
               <Col className="order-md-2" md="6">
                 <img
@@ -53,7 +56,6 @@ function IntensiveAnalysis() {
                 />
               </Col>
               <Col className="order-md-1" md="6">
-              <Search/>
                 <div className="pr-md-5">
                   <div className="icon icon-lg icon-shape icon-shape-success shadow rounded-circle mb-5">
                     <i className="ni ni-settings-gear-65" />
