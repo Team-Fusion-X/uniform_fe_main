@@ -5,6 +5,7 @@ function SearchComponent({ divisionOptions, universityOptions, departmentOptions
     const customStyles = {
         control: (provided) => ({
             ...provided,
+            minWidth: '200px',
             minHeight: '35px',
             height: '35px',
             margin: '10px'
