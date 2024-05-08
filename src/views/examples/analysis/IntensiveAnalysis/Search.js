@@ -1,102 +1,183 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import UniversityFilter from '../UniversityFilter';
+import { Button, Row, Col, Container, Form, FormGroup, Label, Input, Table } from 'reactstrap';
+import styled from 'styled-components';
+
+const StyledTable = styled(Table)`
+  border-collapse: separate; 
+  border-spacing: 0; 
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05); // 그림자 추가
+  background-color: #f8f9fa; // 배경색 설정
+
+  th {
+    background-color: #4793ff; // 헤더 배경색
+    color: white; // 헤더 텍스트 색상
+    border-bottom: 2px solid #dee2e6; // 헤더 하단 테두리 강조
+    border-radius: 0.5rem 0.5rem 0 0; // 상단 모서리 둥글게
+  }
+
+  td {
+    border-top: none; // 셀 상단 테두리 제거
+  }
+`;
 
 function Search() {
-  const [data, setData] = useState(() => {
-    // 로컬 스토리지에서 캐시된 데이터를 불러옵니다.
-    const cachedData = localStorage.getItem('academicData');
-    return cachedData ? JSON.parse(cachedData) : null;
-  });
-  const [selectedField, setSelectedField] = useState(null);
-  const [selectedMajor, setSelectedMajor] = useState(null);
-  const [selectedColleges, setSelectedColleges] = useState([]);
+  const [selectedFields, setSelectedFields] = useState(null);
+  const [selectedKeyword, setSelectedKeyword] = useState(null);
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [selectedUniversity, setSelectedUniversity] = useState(null);
+
+  const { uniqueFields, setFields, 
+    uniqueKeywords, setKeyword, 
+    uniqueDepartments, setDepartment, 
+    uniqueUniversities, setUniversity } = UniversityFilter();
+
+    const handleSubmit = () => {
+      // 여기에 학교 & 학과 담아서 합격률 조회 로직 발동
+      // 마우스 커서 아래로 이동 아래에서 합격률 분석 결과 보여주고 그 밑에 미리
+      // 생각해둔 로직 넣기
+  };
 
   useEffect(() => {
-    if (!data) {
-      // 데이터가 캐시되어 있지 않으면 API에서 데이터를 불러옵니다.
-      const fetchData = async () => {
-        try{
-          const response = await axios.get('http://orion.mokpo.ac.kr:8482/api/fields/academics');
-          localStorage.setItem('academicData', JSON.stringify(response.data)); // 데이터를 로컬 스토리지에 저장
-          setData(response.data);
-        } catch(error){
-          setData({
-            "공학계열": {
-              "컴퓨터공학과": ["목포대학교", "서울대학교"],
-              "전자공학과": ["고려대학교"],
-              "화학공학과": ["POSTECH", "서울대학교"]
-            },
-            "인문계열": {
-              "영어학과": ["서울대학교", "연세대학교"],
-              "사학과": ["서울대학교"],
-              "국어국문학과": ["서울대학교", "한양대학교"]
-            }
-          });
-        }
-      };
-      fetchData();
-    }
-  }, []);
+    setFields(selectedFields);
+    setSelectedKeyword(null);
+    setSelectedDepartment(null);
+    setSelectedUniversity(null);
+  }, [selectedFields]);
 
-  const handleFieldChange = (field) => {
-    setSelectedField(data[field]);
-    setSelectedMajor(null);
-    setSelectedColleges([]);
-  };
+  useEffect(() => {
+    setKeyword(selectedKeyword);
+    setSelectedDepartment(null);
+    setSelectedUniversity(null);
+  }, [selectedKeyword]);
 
-  const handleMajorChange = (major) => {
-    setSelectedMajor(major);
-  };
-
-  const handleCollegeToggle = (college) => {
-    setSelectedColleges(prev => 
-      prev.includes(college) ? prev.filter(c => c !== college) : [...prev, college]
-    );
-  };
+  useEffect(() => {
+    setUniversity(selectedUniversity);
+    setSelectedDepartment(null);
+  }, [selectedUniversity]);
 
   return (
-    <div>
-      <div>
-        <h1>계열 선택</h1>
-        {data && Object.keys(data).map((field) => (
-          <button key={field} onClick={() => handleFieldChange(field)}>
-            {field}
-          </button>
-        ))}
-      </div>
-      {selectedField && (
-        <div>
-          <h1>학과 선택</h1>
-          {Object.keys(selectedField).map((major) => (
-            <div key={major}>
-              <input
-                type="checkbox"
-                id={major}
-                onChange={() => handleMajorChange(major)}
-                checked={selectedMajor === major}
-              />
-              <label htmlFor={major}>{major}</label>
-            </div>
-          ))}
-        </div>
-      )}
-      {selectedMajor && selectedField[selectedMajor] && (
-        <div>
-          <h1>대학 선택</h1>
-          {selectedField[selectedMajor].map((college) => (
-            <div key={college}>
-              <input
-                type="checkbox"
-                id={college}
-                onChange={() => handleCollegeToggle(college)}
-                checked={selectedColleges.includes(college)}
-              />
-              <label htmlFor={college}>{college}</label>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    <Container>
+      <Form>
+        <StyledTable bordered responsive>
+          <tbody>
+            <tr>
+              <th className="h4" colSpan={4}>계열선택</th>
+            </tr>
+            <tr>
+              <td colSpan={3}>
+                <Row>
+                  {uniqueFields.map((field, index) => (
+                    <Col md={3} key={index}>
+                      <FormGroup check>
+                        <Label check>
+                          <Input
+                            type="radio"
+                            name="field"
+                            checked={selectedFields === field}
+                            onChange={() => setSelectedFields(field)}
+                          />
+                          {field}
+                        </Label>
+                      </FormGroup>
+                    </Col>
+                  ))}
+                </Row>
+              </td>
+            </tr>
+            {selectedFields && (
+              <>
+                <tr>
+                  <th className="h4" colSpan={3}>키워드 선택</th>
+                </tr>
+                <tr>
+                  <td colSpan={3}>
+                    <Row>
+                      {uniqueKeywords.map((keyword, index) => (
+                        <Col md={3} key={index}>
+                          <FormGroup check>
+                            <Label check>
+                              <Input
+                                type="radio"
+                                name="keyword"
+                                checked={selectedKeyword === keyword}
+                                onChange={() => setSelectedKeyword(keyword)}
+                              />
+                              {keyword}
+                            </Label>
+                          </FormGroup>
+                        </Col>
+                      ))}
+                    </Row>
+                  </td>
+                </tr>
+              </>
+            )}
+            {selectedKeyword && (
+              <>
+                <tr>
+                  <th className="h4" colSpan={4}>학교 선택</th>
+                </tr>
+                <tr>
+                  <td colSpan={3}>
+                    <Row>
+                      {uniqueUniversities.map((university, index) => (
+                        <Col md={3} key={index}>
+                          <FormGroup check>
+                            <Label check>
+                              <Input
+                                type="radio"
+                                name="university"
+                                checked={selectedUniversity === university}
+                                onChange={() => setSelectedUniversity(university)}
+                              />
+                              {university}
+                            </Label>
+                          </FormGroup>
+                        </Col>
+                      ))}
+                    </Row>
+                  </td>
+                </tr>
+              </>
+            )}
+            {selectedUniversity && (
+              <>
+                <tr>
+                  <th className="h4" colSpan={3}>학과 선택</th>
+                </tr>
+                <tr>
+                  <td colSpan={3}>
+                    <Row>
+                      {uniqueDepartments.map((department, index) => (
+                        <Col md={3} key={index}>
+                          <FormGroup check>
+                            <Label check>
+                              <Input
+                                type="radio"
+                                name="department"
+                                checked={selectedDepartment === department}
+                                onChange={() => setSelectedDepartment(department)}
+                              />
+                              {department}
+                            </Label>
+                          </FormGroup>
+                        </Col>
+                      ))}
+                    </Row>
+                  </td>
+                </tr>
+              </>
+            )}
+          </tbody>
+        </StyledTable>
+        <Row>
+          <Col className="text-center">
+            <Button onClick={handleSubmit} color="primary">적용하기</Button>
+          </Col>
+        </Row>
+      </Form>
+    </Container>
   );
 }
 
