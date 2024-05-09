@@ -18,7 +18,7 @@ function UniversityTest() {
     setFilteredData(result);
   }, [university, department, fields, keyword]);
 
-  return (
+  return (  
     <div>
       <h1>University Data Filter</h1>
       {/* 조건 입력 필드 */}
