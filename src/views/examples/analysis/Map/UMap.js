@@ -9,13 +9,12 @@ import yellow_marker from './image/yellow.png';
 import data from './json/test_user_data.json';
 //pages
 import SearchBar from './SearchBar';
-import MajorSelect from './MajorSelect';
+import MajorSelection from './MajorSelect';
 
 const UMap = () => {
     const [clusterLevel, setClusterLevel] = useState(10);
     const [positions, setPositions] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
-    const [selectedMajors, setSelectedMajors] = useState([]);
     const mapRef = useRef(null);
     const maxLevel = 13;
 
@@ -38,6 +37,7 @@ const UMap = () => {
     };
 
     // MajorSelect 관련 설정
+    const [selectedMajors, setSelectedMajors] = useState([]);
     const handleSelectionComplete = (majors) => {
         setSelectedMajors(majors);
         // 선택된 전공들을 상태에 저장하고 필요한 추가 처리를 할 수 있습니다.
@@ -81,7 +81,7 @@ const UMap = () => {
                 <div style={{ width: "30%", background: "#f9f9f9", padding: "20px" }}>
                     {/* 왼쪽 패널 */}
                     <SearchBar onSearch={handleSearch} />
-                    <MajorSelect onSelectionComplete={handleSelectionComplete} />
+                    <MajorSelection onSelectionComplete={handleSelectionComplete} />
                 </div>
                 <div style={{ width: "70%" }}>
                     <Map

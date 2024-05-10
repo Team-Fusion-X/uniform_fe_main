@@ -1,104 +1,158 @@
-import { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState } from 'react';
+import { Container, Dropdown, DropdownToggle, DropdownMenu, Input, Button, CustomInput, DropdownItem, Row, Col } from 'reactstrap';
+import data from './json/fields_keyword.json';
 
-const checkboxesList = [
-    '전체',
-    '인문계열',
-    '사회계열',
-    '교육계열',
-    '공학계열',
-    '자연계열',
-    '의학계열',
-    '예체능계열'
-];
+export function TypeSelect({ onTypeSelected }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedType, setSelectedType] = useState("계열 선택");
 
-const getDefaultCheckboxes = () =>
-    checkboxesList.map(checkbox => ({
-        name: checkbox,
-        checked: false,
-    }));
+    const toggle = () => setIsOpen(!isOpen);
 
-export function useCheckboxes(defaultCheckboxes) {
-    const [checkboxes, setCheckboxes] = useState(
-        defaultCheckboxes || getDefaultCheckboxes(),
+    const handleTypeSelect = (type) => {
+        setSelectedType(type);
+        const selectedData = data.find(item => item.fields === type);
+        const keywords = selectedData && selectedData.keywords ? selectedData.keywords.split(',') : [];
+        onTypeSelected(keywords); // 선택된 키워드를 상위 컴포넌트로 전달
+    };
+
+    return (
+        <Dropdown isOpen={isOpen} toggle={toggle} style={{ width: '100%' }}> {/* 여기에 width: 100% 추가 */}
+            <DropdownToggle caret style={{ width: '100%' }}> {/* 토글 버튼도 너비 100%로 설정 */}
+                {selectedType}
+            </DropdownToggle>
+            <DropdownMenu style={{ maxHeight: '250px', overflowY: 'auto', overflowX: 'hidden', width: '100%' }}>
+                {data.map((item) => (
+                    <DropdownItem key={item.fields} onClick={() => handleTypeSelect(item.fields)}>
+                        {item.fields}
+                    </DropdownItem>
+                ))}
+            </DropdownMenu>
+        </Dropdown>
     );
+}
 
-    function setCheckbox(index, checked) {
-        const newCheckboxes = [...checkboxes];
-        if (checkboxes[index].name === '전체') {
-            newCheckboxes.forEach((box, idx) => {
-                newCheckboxes[idx].checked = checked;
-            });
-        } else {
-            newCheckboxes[index].checked = checked;
-            newCheckboxes[0].checked = newCheckboxes.slice(1).every(box => box.checked);
-        }
-        setCheckboxes(newCheckboxes);
-    }
+export function useSelectMajors() {
+    const [selectedMajors, setSelectedMajors] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+    const [search, setSearch] = useState('');
+
+    const toggleDropdown = () => setIsOpen(!isOpen);
+    const handleSelectChange = (event) => {
+        const value = event.target.value;
+        setSelectedMajors(
+            event.target.checked
+                ? [...selectedMajors, value]
+                : selectedMajors.filter(major => major !== value)
+        );
+    };
+
+    const handleRemoveMajor = (majorToRemove) => {
+        setSelectedMajors(selectedMajors.filter(major => major !== majorToRemove));
+    };
 
     return {
-        setCheckbox,
-        checkboxes,
+        handleSelectChange,
+        selectedMajors,
+        toggleDropdown,
+        isOpen,
+        setSearch,
+        search,
+        handleRemoveMajor,
     };
 }
 
-const CheckboxContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 10px;
-`;
-const Checkbox = styled.input`
-  margin: 0px 10px 0px !important;
-  cursor: pointer;
-`;
-const CheckboxLabel = styled.label`
-  cursor: pointer;
-  display: block;
-  font-weight: normal;
-`;
-
-export function Checkboxes({ checkboxes, setCheckbox }) {
+export function SelectedMajorsDisplay({ selectedMajors, onRemove }) {
     return (
-        <>
-            <div style={{ marginTop: "30px" }}>
-                <div style={{ marginBottom: "15px", fontSize: "18px" }}>
-                    전공계열로 분석하기
-                </div>
-                <CheckboxContainer>
-                    {checkboxes.map((checkbox, i) => (
-                        <CheckboxLabel key={i}>
-                            <Checkbox
-                                type="checkbox"
-                                checked={checkbox.checked}
-                                onChange={e => {
-                                    setCheckbox(i, e.target.checked);
-                                }}
-                            />
-                            {checkbox.name}
-                        </CheckboxLabel>
-                    ))}
-                </CheckboxContainer>
-            </div>
-        </>
+        <Container style={{
+            border: '1px solid #ccc', padding: '0.625rem', marginTop: '1rem', minHeight: '150px', maxHeight: '150px', overflowY: 'auto'
+        }}>
+            {selectedMajors.length > 0 ? (
+                selectedMajors.map((major, index) => (
+                    <div key={index} style={{ padding: '0.1rem 0.5rem', border: '1px solid #ccc', margin: '0.3125rem', display: 'inline-block', marginLeft: '0.625rem', height: '2rem', lineHeight: '2', fontSize: '0.75rem' }}>
+                        <span style={{ flex: '1' }}>{major}</span>
+                        <Button close onClick={() => onRemove(major)} style={{ height: '1.7rem', width: '1rem' }} />
+                    </div>
+                ))
+            ) : (
+                <div>선택된 전공이 없습니다.</div>
+            )}
+        </Container>
     );
 }
 
-export default function CheckboxRadioExample({ onSelectionComplete }) {
-    const { checkboxes, setCheckbox } = useCheckboxes();
+export function MajorSelect({
+    handleSelectChange,
+    selectedMajors,
+    selectedKeywords,
+    toggleDropdown,
+    isOpen,
+    setSearch,
+    search,
+}) {
+
+    return (
+        <Dropdown isOpen={isOpen} toggle={toggleDropdown}>
+            <DropdownToggle caret>
+                학과 키워드 선택
+            </DropdownToggle>
+            <DropdownMenu style={{ maxHeight: '250px', overflowY: 'auto' }}>
+                <Input
+                    type="search"
+                    placeholder="학과 검색창"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    style={{
+                        margin: '1rem', width: 'auto'
+                    }}
+                />
+                {selectedKeywords.filter(keyword => keyword.toLowerCase().includes(search.toLowerCase())).map((keyword, index) => (
+                    <div style={{ paddingLeft: '1rem' }}>
+                        <CustomInput
+                            key={`${keyword}-${index}`}
+                            type="checkbox"
+                            id={`keyword-${index}`}
+                            label={keyword}
+                            value={keyword}
+                            checked={selectedMajors.includes(keyword)}
+                            onChange={handleSelectChange}
+                        />
+                    </div>
+                ))}
+            </DropdownMenu>
+        </Dropdown>
+    );
+}
+
+export default function MajorSelection({ onSelectionComplete }) {
+    const { handleSelectChange, selectedMajors, toggleDropdown, isOpen, setSearch, search, handleRemoveMajor } = useSelectMajors();
+    const [selectedKeywords, setSelectedKeywords] = useState([]);
+
+    const handleTypeSelected = (keywords) => {
+        setSelectedKeywords(keywords);
+    };
 
     const handleSubmit = () => {
-        const selectedNames = checkboxes.filter(c => c.checked && c.name !== '전체').map(c => c.name);
         if (onSelectionComplete) {
-            onSelectionComplete(selectedNames);
+            onSelectionComplete(selectedMajors);
         }
     };
 
     return (
-        <div>
-            <Checkboxes {...{ checkboxes, setCheckbox }} />
-            <button onClick={handleSubmit} style={{ marginTop: '10px', marginLeft: '150px', padding: '10px 20px', cursor: 'pointer', fontSize: '16px', backgroundColor: '#646EFF', border: 'none' }}>
-                적용하기
-            </button>
-        </div>
+        <Container>
+            <Row>
+                <Col md={6}> {/* 계열 선택창 */}
+                    <TypeSelect onTypeSelected={handleTypeSelected} />
+                </Col>
+                <Col md={6}> {/* 학과 키워드 선택창 */}
+                    <MajorSelect {...{ handleSelectChange, selectedMajors, selectedKeywords, toggleDropdown, isOpen, setSearch, search }} />
+                </Col>
+            </Row>
+            <SelectedMajorsDisplay selectedMajors={selectedMajors} onRemove={handleRemoveMajor} />
+            <div className="text-center">
+                <Button onClick={handleSubmit} color="primary" style={{ marginTop: '1rem', width: "120px" }}>
+                    적용하기
+                </Button>
+            </div>
+        </Container>
     );
 }
