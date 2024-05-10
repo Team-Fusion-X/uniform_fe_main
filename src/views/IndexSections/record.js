@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   Input,
-  Row,
-  Col,
   Button
 } from "reactstrap";
 import axios from 'axios'; // Axios 추가
@@ -21,9 +19,10 @@ function Record() {
   const [credits, setCredits] = useState('');
   const [rawScore, setRawScore] = useState('');
   const [subjectAverage, setSubjectAverage] = useState('');
-  const [standardDeviation, setStandardDeviation] = useState('');
+  const [sdeviation, setStandardDeviation] = useState('');
   const [studentsNumber, setStudentsNumber] = useState('');
   const [rank, setRank] = useState('');
+  const [scoreData, setScoreData] = useState({}); // 수정된 부분: scoreData state 추가
 
   const handleCurriculumChange = (event) => {
     setSelectedCurriculum(event.target.value);
@@ -50,87 +49,98 @@ function Record() {
     setRank(event.target.value);
   };
 
-  let scoreData = {
-    '1-1': [
-      { curriculum: '국어', subject: '국어 1', credits: 3, rawScore: 80, subjectAverage: 75, standardDeviation: 5, studentsNumber: 50, rank: 15 },
-      { curriculum: '수학', subject: '수학 2', credits: 2, rawScore: 85, subjectAverage: 78, standardDeviation: 4, studentsNumber: 50, rank: 12 },
-    ],
-    '1-2': [
-      { curriculum: '국어', subject: '국어 2', credits: 4, rawScore: 90, subjectAverage: 85, standardDeviation: 6, studentsNumber: 60, rank: 8 },
-    ],
-    // Add data for other tabs
-  };
-
   const handleAddScore = () => {
     let [schoolYear, schoolTerm] = activeTab.split('-');
     let newScore = {
-      school_year: parseInt(schoolYear),
-      school_term: parseInt(schoolTerm),
-      curriculum: selectedCurriculum,
-      subject: selectedSubject,
-      credits: parseInt(credits),
-      rawScore: parseInt(rawScore),
-      subjectAverage: parseInt(subjectAverage),
-      standardDeviation: parseInt(standardDeviation),
-      studentsNumber: parseInt(studentsNumber),
-      rank: parseInt(rank)
+      "schoolYear": parseInt(schoolYear),
+      "schoolTerm": parseInt(schoolTerm),
+      "curriculum": selectedCurriculum,
+      "subjectName": selectedSubject,
+      "credit": parseInt(credits),
+      "rawScore": parseFloat(rawScore),
+      "subjectMean": parseFloat(subjectAverage),
+      "sDeviation": parseFloat(sdeviation),
+      "headCount": parseInt(studentsNumber),
+      "ranking": parseInt(rank)
     };
-    console.log(newScore)
-    // axios.post('your_api_endpoint_here', newScore)
-    // .then(response => {
-    //   console.log('성적이 추가되었습니다.');
-    //   // 성적이 성공적으로 추가되었을 때 해야 할 작업 추가
-    // })
-    // .catch(error => {
-    //   console.error('성적 추가 중 오류가 발생했습니다.', error);
-    // });
+    axios.post('api/8482/score', newScore, {withCredentials: true})
+    .then(response => {
+      // scoreData에 새로운 데이터 추가
+      const key = `${newScore.schoolYear}-${newScore.schoolTerm}`;
+      if (!scoreData[key]) {
+        scoreData[key] = [];
+      }
+      scoreData[key].push({
+        curriculum: newScore.curriculum,
+        subject: newScore.subjectName,
+        credits: newScore.credit,
+        rawScore: newScore.rawScore,
+        subjectAverage: newScore.subjectMean,
+        standardDeviation: newScore.sDeviation,
+        studentsNumber: newScore.headCount,
+        rank: newScore.ranking
+      });
+      // scoreData state 갱신
+      setScoreData({ ...scoreData });
+
+      // 입력란 초기화
+      setSelectedCurriculum('');
+      setSelectedSubject('');
+      setCredits('');
+      setRawScore('');
+      setSubjectAverage('');
+      setStandardDeviation('');
+      setStudentsNumber('');
+      setRank('');
+    })
+    .catch(error => {
+      console.error('성적 추가 중 오류가 발생했습니다.', error);
+    });
   };
 
   useEffect(() => {
-    // 교과 데이터 상태 설정(여기서 get으로 데이터 따와서 하면 될 듯)
-    setCurriculum(['국어', '수학', '영어']);
+    axios.get('/api/8482/subject', {withCredentials: true})
+      .then(response => {
+        const subjectsData = response.data;
+        setSubjects(subjectsData);
+        setCurriculum(Object.keys(subjectsData));
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류가 발생했습니다.', error);
+      });
+  }, []);
 
-    // 과목 데이터 상태 설정
-    const subjectsData = {
-      '국어': ['국어1', '국어2'],
-      '수학': ['수학1', '수학2'],
-      '영어': ['영어1', '영어2'],
-    };
-    setSubjects(subjectsData);
-
-    // 주소 + 세션에 로그인한 ID로 넣기만 하면 끝
-    // 서버에서 세션으로 접속된 user_id를 기반으로 score 데이터를 가져오는 Get 요청 수행
-    // axios.get('your_api_endpoint_here')
-    // .then(response => {
-    //   // 서버에서 받아온 데이터를 scoreData로 설정
-    //   const receivedData = response.data; // 서버에서 받아온 데이터
-    //   const formattedData = {}; // 정제된 데이터를 저장할 객체
-    //   receivedData.forEach((item, index) => {
-    //     // 서버에서 받아온 데이터를 newScore와 동일한 형식으로 변환하여 formattedData에 추가
-    //     const { school_year, school_term, curriculum, subject, credits, rawScore, subjectAverage, standardDeviation, studentsNumber, rank } = item;
-    //     const newScore = {
-    //       school_year: parseInt(school_year),
-    //       school_term: parseInt(school_term),
-    //       curriculum,
-    //       subject,
-    //       credits: parseInt(credits),
-    //       rawScore: parseInt(rawScore),
-    //       subjectAverage: parseInt(subjectAverage),
-    //       standardDeviation: parseInt(standardDeviation),
-    //       studentsNumber: parseInt(studentsNumber),
-    //       rank: parseInt(rank)
-    //     };
-    //     if (formattedData[school_year + '-' + school_term]) {
-    //       formattedData[school_year + '-' + school_term].push(newScore);
-    //     } else {
-    //       formattedData[school_year + '-' + school_term] = [newScore];
-    //     }
-    //   });
-    //   setScoreData(formattedData);
-    // })
-    // .catch(error => {
-    //   console.error('데이터를 가져오는 중 오류가 발생했습니다.', error);
-    // });
+  useEffect(() => {
+    axios.get('/api/8482/score', { withCredentials: true })
+      .then(response => {
+        const receivedData = response.data.getScores;
+        const formattedData = {};
+  
+        // schoolYear와 schoolTerm을 조합하여 키를 생성하고, 해당 키에 해당하는 배열에 데이터 추가
+        receivedData.forEach(item => {
+          const key = `${item.schoolYear}-${item.schoolTerm}`;
+          if (!formattedData[key]) {
+            formattedData[key] = [];
+          }
+          formattedData[key].push({
+            curriculum: item.curriculum,
+            subject: item.subjectName,
+            credits: item.credit,
+            rawScore: item.rawScore,
+            subjectAverage: item.subjectMean,
+            standardDeviation: item.sdeviation,
+            studentsNumber: item.headCount,
+            rank: item.ranking
+          });
+          
+        });
+  
+        // 가공된 데이터를 state에 설정
+        setScoreData(formattedData);
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류가 발생했습니다.', error);
+      });
   }, []);
 
   return (
@@ -239,7 +249,7 @@ function Record() {
                       id="standardDeviation"
                       placeholder=""
                       type="text"
-                      value={standardDeviation}
+                      value={sdeviation}
                       onChange={handleStandardDeviationChange}
                     />
                   </th>

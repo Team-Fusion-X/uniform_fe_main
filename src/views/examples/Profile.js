@@ -82,16 +82,16 @@ function Profile() {
                   <Col className="order-lg-1" lg="4">
                     <div className="card-profile-stats d-flex justify-content-center">
                       <div>
-                        <span className="heading">22</span>
-                        <span className="description">Friends</span>
+                        <span className="heading">강호준</span>
+                        <span className="description">이름</span>
                       </div>
                       <div>
-                        <span className="heading">10</span>
-                        <span className="description">Photos</span>
+                        <span className="heading">3.11</span>
+                        <span className="description">전 과목</span>
                       </div>
                       <div>
-                        <span className="heading">89</span>
-                        <span className="description">Comments</span>
+                        <span className="heading">2.72</span>
+                        <span className="description">국영수탐</span>
                       </div>
                     </div>
                   </Col>

@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const initialSessionId = localStorage.getItem('sessionId');
+  const initialSessionId = Cookies.get('sessionId');
   const [auth, setAuth] = useState({
     isLoggedIn: !!initialSessionId,
     sessionId: initialSessionId
@@ -14,8 +15,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setAuth({ isLoggedIn: false, sessionId: null });
-    localStorage.removeItem('sessionId');
-    navigate('/Landing-page');
+    Cookies.remove('sessionId'); // 쿠키에서 세션 ID 제거
+    navigate('/landing-page');
   };
 
   useEffect(() => {
