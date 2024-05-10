@@ -69,7 +69,7 @@ function ChatBot() {
 
     setUserInput('');
 
-    const apiUrl = 'http://orion.mokpo.ac.kr:8582/api/self-introduction';
+    const apiUrl = '/api/8582/self-introduction';
     fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -148,7 +148,7 @@ function ChatBot() {
       };
 
       // 서버 주소를 담을 변수 선언
-      let apiUrl = 'http://orion.mokpo.ac.kr:8582/api/set-unifot'; // '수정' 모드에 맞는 API 엔드포인트
+      let apiUrl = '/api/8582/set-unifot'; // '수정' 모드에 맞는 API 엔드포인트
 
       // apiUrl을 사용하여 서버에 POST 요청 보내기
       fetch(apiUrl, {
@@ -269,7 +269,7 @@ function ChatBot() {
         let apiUrl = '';
 
         // API 엔드포인트를 apiUrl 변수에 할당
-        apiUrl = 'http://orion.mokpo.ac.kr:8582/api/unifot';
+        apiUrl = '/api/8582/unifot';
 
         // apiUrl을 사용하여 서버에 POST 요청 보내기
         fetch(apiUrl, {

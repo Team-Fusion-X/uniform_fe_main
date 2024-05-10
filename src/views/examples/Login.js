@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'contexts/AuthContext.js';
+import Cookies from 'js-cookie';
 
 // reactstrap components
 import {
@@ -36,14 +37,14 @@ function Login() {
     if (e) e.preventDefault(); // 이벤트 객체가 존재할 때만 preventDefault 호출
 
     try {
-      const response = await axios.post('http://orion.mokpo.ac.kr:8482/api/members/login', {
+      const response = await axios.post('/api/8482/members/login', {
         data: memberId,
         password: memberPassword,
       })
       // 성공 처리 로직
       const sessionId = response.data.sessionId; // 응답에서 세션 ID 추출
+      Cookies.set('sessionId', sessionId, { expires: 1/48, path: '/'}); // 쿠키에 세션 ID 저장
       setAuth({ isLoggedIn: true, sessionId: sessionId });
-      localStorage.setItem('sessionId', sessionId);
 
       navigate('/landing-page');
       // 추가적인 성공 처리 로직

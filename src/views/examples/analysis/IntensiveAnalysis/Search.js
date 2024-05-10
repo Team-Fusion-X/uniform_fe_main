@@ -3,7 +3,12 @@ import UniversityFilter from '../UniversityFilter';
 import { Button, Row, Col, Container, Form, FormGroup, Label, Input, Table } from 'reactstrap';
 import styled from 'styled-components';
 
-const StyledTable = styled(Table)`
+function Search() {
+  const [selectedFields, setSelectedFields] = useState(null);
+  const [selectedKeyword, setSelectedKeyword] = useState(null);
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [selectedUniversity, setSelectedUniversity] = useState(null);
+  const StyledTable = styled(Table)`
   border-collapse: separate; 
   border-spacing: 0; 
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05); // 그림자 추가
@@ -18,14 +23,7 @@ const StyledTable = styled(Table)`
 
   td {
     border-top: none; // 셀 상단 테두리 제거
-  }
-`;
-
-function Search() {
-  const [selectedFields, setSelectedFields] = useState(null);
-  const [selectedKeyword, setSelectedKeyword] = useState(null);
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
-  const [selectedUniversity, setSelectedUniversity] = useState(null);
+  }`;
 
   const { uniqueFields, setFields, 
     uniqueKeywords, setKeyword, 
