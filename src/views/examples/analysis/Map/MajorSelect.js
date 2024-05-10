@@ -20,7 +20,7 @@ export function TypeSelect({ onTypeSelected }) {
             <DropdownToggle caret style={{ width: '100%' }}> {/* 토글 버튼도 너비 100%로 설정 */}
                 {selectedType}
             </DropdownToggle>
-            <DropdownMenu style={{ maxHeight: '200px', overflowY: 'auto', overflowX: 'hidden', width: '100%' }}>
+            <DropdownMenu style={{ maxHeight: '250px', overflowY: 'auto', overflowX: 'hidden', width: '100%' }}>
                 {data.map((item) => (
                     <DropdownItem key={item.fields} onClick={() => handleTypeSelect(item.fields)}>
                         {item.fields}
@@ -63,12 +63,14 @@ export function useSelectMajors() {
 
 export function SelectedMajorsDisplay({ selectedMajors, onRemove }) {
     return (
-        <Container style={{ border: '1px solid #ccc', padding: '0.625rem', marginTop: '1rem' }}>
+        <Container style={{
+            border: '1px solid #ccc', padding: '0.625rem', marginTop: '1rem', minHeight: '150px', maxHeight: '150px', overflowY: 'auto'
+        }}>
             {selectedMajors.length > 0 ? (
                 selectedMajors.map((major, index) => (
-                    <div key={index} style={{ padding: '0.1rem 0.625rem', border: '1px solid #ccc', margin: '0.3125rem', display: 'inline-block', marginLeft: '0.625rem', height: '3rem', lineHeight: '2.5' }}>
+                    <div key={index} style={{ padding: '0.1rem 0.5rem', border: '1px solid #ccc', margin: '0.3125rem', display: 'inline-block', marginLeft: '0.625rem', height: '2rem', lineHeight: '2', fontSize: '0.75rem' }}>
                         <span style={{ flex: '1' }}>{major}</span>
-                        <Button close onClick={() => onRemove(major)} />
+                        <Button close onClick={() => onRemove(major)} style={{ height: '1.7rem', width: '1rem' }} />
                     </div>
                 ))
             ) : (
@@ -81,24 +83,27 @@ export function SelectedMajorsDisplay({ selectedMajors, onRemove }) {
 export function MajorSelect({
     handleSelectChange,
     selectedMajors,
-    selectedKeywords, // 새로 생성
+    selectedKeywords,
     toggleDropdown,
     isOpen,
     setSearch,
-    search
+    search,
 }) {
+
     return (
         <Dropdown isOpen={isOpen} toggle={toggleDropdown}>
             <DropdownToggle caret>
                 학과 키워드 선택
             </DropdownToggle>
-            <DropdownMenu>
+            <DropdownMenu style={{ maxHeight: '250px', overflowY: 'auto' }}>
                 <Input
                     type="search"
                     placeholder="학과 검색창"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    style={{ margin: '1rem', width: 'auto' }}
+                    style={{
+                        margin: '1rem', width: 'auto'
+                    }}
                 />
                 {selectedKeywords.filter(keyword => keyword.toLowerCase().includes(search.toLowerCase())).map((keyword, index) => (
                     <div style={{ paddingLeft: '1rem' }}>
