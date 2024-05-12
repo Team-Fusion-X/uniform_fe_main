@@ -27,7 +27,7 @@
 
 .user {
   max-width: 500px;
-  text-align: right;
+  text-align: left;
   margin-left: auto;
   margin-right: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
