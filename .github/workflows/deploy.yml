@@ -1,0 +1,31 @@
+name: Deploy to Heroku
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 push 되었을 때 동작
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # 작업을 수행할 가상 환경
+
+    steps:
+    - uses: actions/checkout@v2  # 코드 체크아웃
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20.x'  # Node 버전 설정
+
+    - name: Install dependencies
+      run: npm install  # 의존성 설치
+
+    - name: Build
+      run: npm run build  # 프로젝트 빌드
+
+    - name: Deploy to Heroku
+      uses: akhileshns/heroku-deploy@v3.12.12  # Heroku 배포 액션 사용
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: "uniform-fe"  # Heroku 앱 이름
+        heroku_email: "rhzn5512@naver.com"  # Heroku 계정 이메일

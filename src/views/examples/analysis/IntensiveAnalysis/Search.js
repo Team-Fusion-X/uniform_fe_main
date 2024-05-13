@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import UniversityFilter from '../UniversityFilter';
-import { Button, Row, Col, Container, Form, FormGroup, Label, Input, Table } from 'reactstrap';
+import { Button, Row, Col, Container, Form, FormGroup, Label, Input, Table, Card, CardBody, CardTitle, CardText } from 'reactstrap';
 import styled from 'styled-components';
+import axios from 'axios';
 
 function Search() {
   const [selectedFields, setSelectedFields] = useState(null);
   const [selectedKeyword, setSelectedKeyword] = useState(null);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedUniversity, setSelectedUniversity] = useState(null);
+  const [resultData, setResultData] = useState("");
   const StyledTable = styled(Table)`
   border-collapse: separate; 
   border-spacing: 0; 
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05); // 그림자 추가
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1); // 그림자 추가
   background-color: #f8f9fa; // 배경색 설정
 
   th {
     background-color: #4793ff; // 헤더 배경색
     color: white; // 헤더 텍스트 색상
+    padding: 10px 15px; // 헤더 패딩
     border-bottom: 2px solid #dee2e6; // 헤더 하단 테두리 강조
     border-radius: 0.5rem 0.5rem 0 0; // 상단 모서리 둥글게
   }
@@ -24,6 +27,28 @@ function Search() {
   td {
     border-top: none; // 셀 상단 테두리 제거
   }`;
+  // StyledTable 컴포넌트를 정의합니다.
+  const StyledTable2 = styled(Table)`
+    width: 100%; // 테이블 너비를 100%로 설정
+    margin: 20px 0; // 위아래 여백 설정
+    border-collapse: separate; 
+    border-spacing: 0; 
+    background-color: #f8f9fa; // 배경색 설정
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); // 그림자 추가
+    border-radius: 10px; // 모서리 둥글게
+
+    th {
+      background-color: #4793ff; // 헤더 배경색
+      color: white; // 헤더 텍스트 색상
+      padding: 10px 15px; // 헤더 패딩
+      border-bottom: 2px solid #dee2e6; // 하단 테두리
+    }
+
+    td {
+      padding: 10px 15px; // 셀 패딩
+      border-top: none; // 상단 테두리 없음
+    }
+    `;
 
   const { uniqueFields, setFields, 
     uniqueKeywords, setKeyword, 
@@ -31,9 +56,21 @@ function Search() {
     uniqueUniversities, setUniversity } = UniversityFilter();
 
     const handleSubmit = () => {
-      // 여기에 학교 & 학과 담아서 합격률 조회 로직 발동
-      // 마우스 커서 아래로 이동 아래에서 합격률 분석 결과 보여주고 그 밑에 미리
-      // 생각해둔 로직 넣기
+      let postData = {
+        "field":selectedFields,
+        "keyword":selectedKeyword,
+        "university":selectedDepartment,
+        "department":selectedUniversity
+      };
+      setResultData("16%");
+      axios.post('api/8482/analysis/one', postData, {withCredentials: true})
+      .then(response => {
+        const passRate = response.data["합격 확률"];
+        setResultData(passRate);
+      })
+      .catch(error => {
+        console.error('집중 분석 중 오류가 발생했습니다.', error);
+      });
   };
 
   useEffect(() => {
@@ -174,6 +211,46 @@ function Search() {
             <Button onClick={handleSubmit} color="primary">적용하기</Button>
           </Col>
         </Row>
+        {resultData && (
+          <StyledTable2 striped>
+            <thead>
+              <tr>
+                <th>계열</th>
+                <th>중계열</th>
+                <th>학교</th>
+                <th>학과</th>
+                <th>합격 확률</th>
+              </tr>
+            </thead>
+            <tbody className="h5">
+              <tr>
+                <td>{selectedFields}</td>
+                <td>{selectedKeyword}</td>
+                <td>{selectedUniversity}</td>
+                <td>{selectedDepartment}</td>
+                <td>{resultData}</td>
+              </tr>
+            </tbody>
+          </StyledTable2>
+        )}
+        {resultData && (
+        <Row>
+          <Col>
+            <Card>
+              <CardBody>
+                <CardText className='h4'>여기에 가장 상승폭이 높은 과목을 공부하는 것을 추천</CardText>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col>
+            <Card>
+              <CardBody>
+                <CardText className='h4'>합격 확률이 70% 미만일 경우 전과목 기준 몇 등급이어야 하는지 알려주기</CardText>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        )}
       </Form>
     </Container>
   );
