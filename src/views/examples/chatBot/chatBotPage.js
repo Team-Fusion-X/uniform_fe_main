@@ -54,7 +54,7 @@ function ChatBot() {
 
   // 메시지 전송 버튼 클릭 시 호출되는 함수
   function handleSendMessage() {
-    // 입력값이 공백인 경우 함수 종료
+    // 예외 처리
     if (!userInput.trim()) {
       alert('내용을 입력해주세요!');
       setUserInput('');
@@ -105,98 +105,80 @@ function ChatBot() {
 
   function handleSendMessageModify(formattedQuestionList) {
     const currentTime = formatTime(); // 현재 시간을 가져옴
-
     // 사용자 입력 메시지와 시간 추가
     setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
 
+    // 배열의 각 요소를 순회하면서 개행 문자 처리하여 메시지를 채팅창에 추가
+    console.log(currentMessageIndex)
+    console.log(formattedQuestionList.length)
+    console.log(formattedQuestionList)
+
+    setTimeout(() => {
+      if (currentMessageIndex < formattedQuestionList.length) {
+        // 현재 인덱스가 배열의 범위 내에 있는 경우 메시지 추가
+        setChat((prevChat) => [
+          ...prevChat,
+          { type: 'bot', text: formattedQuestionList[currentMessageIndex], time: currentTime }, // 인덱스 조정
+        ]);
+        setCurrentMessageIndex(currentMessageIndex + 1); // 다음 메시지를 위해 인덱스 증가
+        setFormattedQuestionList(formattedQuestionList);
+        setQuestionCount(4);
+      } else {
+        // 모든 메시지가 표시된 후의 처리
+        console.log('모든 수정 질문에 대한 응답이 완료되었습니다.');
+      }
+    }, 1000); // 1초 지연
+
     // 사용자 응답을 userResponses 상태에 추가
     if (userInput.trim()) {
-        setUserResponses((prevResponses) => [...prevResponses, userInput]);
+      setUserResponses(prevResponses => [...prevResponses, userInput]);
     }
 
     setUserInput('');
 
-    if (currentMessageIndex < formattedQuestionList.length) {
-        setTimeout(() => {
-            setChat((prevChat) => [
-                ...prevChat,
-                { type: 'bot', text: formattedQuestionList[currentMessageIndex], time: currentTime },
-            ]);
+    // 모든 질문에 대한 응답이 완료된 경우
+    if (currentMessageIndex === formattedQuestionList.length) {
+      // 사용자의 응답이 모두 완료되었으므로 서버에 전송
+      // 로딩 상태 설정
+      setLoading(true);
 
-            setCurrentMessageIndex((prevIndex) => prevIndex + 1);
-            setFormattedQuestionList(formattedQuestionList);
-            setQuestionCount(4);
-        }, 1000);
-    } else {
-        console.log('모든 수정 질문에 대한 응답이 완료되었습니다.');
+      let allJson = {
+        // '수정' 모드에 필요한 데이터 구조
+        question: userResponses,
+      };
 
-        setLoading(true);
+      // 서버 주소를 담을 변수 선언
+      let apiUrl = '/api/8582/set-unifot'; // '수정' 모드에 맞는 API 엔드포인트
 
-        setUserResponses((prevResponses) => {
-            const updatedResponses = [...prevResponses];
+      // apiUrl을 사용하여 서버에 POST 요청 보내기
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': "application/json",
+        },
+        body: JSON.stringify(allJson),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data); // 서버로부터의 응답 처리
+          console.log(apiUrl)
+          // JSX에서 개행 문자를 <br>로 바꾸어 출력
+          const formattedAnswer = data.answer.split('\n').map((line, index) => (
+            <React.Fragment key={index}>
+              {line}
+              <br />
+            </React.Fragment>
+          ));
 
-            const allJson = {
-                question: updatedResponses,
-            };
-
-            console.log(allJson);
-
-            const apiUrl = '/api/8582/set-unifot';
-
-            setTimeout(() => {
-                fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(allJson),
-                })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        console.log(data);
-
-                        if (data.answer) {
-                            const formattedAnswer = data.answer.split('\n').map((line, index) => (
-                                <React.Fragment key={index}>
-                                    {line}
-                                    <br />
-                                </React.Fragment>
-                            ));
-
-                            setChat((prevChat) => [...prevChat, { type: 'bot', text: formattedAnswer }]);
-                        } else {
-                            setChat((prevChat) => [
-                                ...prevChat,
-                                {
-                                    type: 'bot',
-                                    text: 'The response could not be processed properly. Please try again.',
-                                    time: formatTime(),
-                                },
-                            ]);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-
-                        setChat((prevChat) => [
-                            ...prevChat,
-                            { type: 'bot', text: 'There was an error processing your request. Please try again.', time: currentTime },
-                        ]);
-                    })
-                    .finally(() => {
-                        setLoading(false);
-                    });
-            }, 1000);
-
-            return updatedResponses;
+          // 채팅창에 서버 응답 추가  
+          setChat((prevChat) => [...prevChat, { type: 'bot', text: formattedAnswer }]);
+        })
+        .catch((error) => console.error('Error:', error))
+        .finally(() => {
+          setLoading(false); // API 호출이 완료되면 로딩 상태를 false로 설정
         });
     }
-}
+  }
 
   function handleSendMessageSecond() {
     if (!userInput.trim()) {
@@ -208,116 +190,117 @@ function ChatBot() {
       setUserInput('');
       return;
     }
-    
+
     setQuestionDataCount(userInput);
     setQuestionCount(3);
     let tmp = userInput;
-
     // 서버에 두 번째 질문에 대한 사용자 입력값을 POST 요청
-    fetch('/api/8582/self-introduction/create', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ UserSelectedType: tmp }),
+    fetch('http://orion.mokpo.ac.kr:8582/api/self-introduction/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ UserSelectedType: tmp }),
     })
-        .then((response2) => response2.json())
-        .then((data2) => {
-            const currentTime = formatTime();
-            // 사용자 입력 메시지와 시간 추가
-            setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
-
-            setTimeout(() => {
-                setQuestionData(data2.message);
-
-                setChat((prevChat) => [
-                    ...prevChat,
-                    { type: 'bot', text: data2.message[questionIndex] },
-                    { type: 'bot', text: data2.message[questionIndex + 1], time: currentTime },
-                ]);
-
-                setQuestionIndex((prevIndex) => prevIndex + 2);
-            }, 1000); // 1초 후 실행
-            setUserInput('');
-        })
-        .catch((error) => console.error('Error:', error));
-}
-
-function handleProcessQuestionResponse() {
-    if (questionData) {
+      .then((response2) => response2.json())
+      .then((data2) => {
         const currentTime = formatTime();
-        // 사용자의 이전 응답 메시지 추가
-        setChat((prevChat) => [
+        // 사용자 입력 메시지와 시간 추가
+        setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
+
+        setTimeout(() => {
+          setQuestionData(data2.message);
+
+          setChat((prevChat) => [
             ...prevChat,
-            { type: 'user', text: userInput, time: currentTime },
-        ]);
+            { type: 'bot', text: data2.message[questionIndex] },
+            { type: 'bot', text: data2.message[questionIndex + 1], time: currentTime },
+          ]);
 
-        // 사용자 응답값을 저장
-        setUserResponses((prevResponses) => {
-            const updatedResponses = [...prevResponses, userInput];
-
-            // 마지막 질문에 도달한 경우 서버로 전송
-            if (questionIndex === questionData.length) {
-                console.log(updatedResponses);
-
-                let allJson = {
-                    problemNumber: questionDataCount,
-                    question: updatedResponses,
-                };
-
-                // 로딩 상태 설정
-                setLoading(true);
-
-                // 서버 주소를 담을 변수 선언
-                let apiUrl = '/api/8582/unifot';
-
-                // apiUrl을 사용하여 서버에 POST 요청 보내기
-                fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': "application/json",
-                    },
-                    body: JSON.stringify(allJson),
-                })
-                    .then((response3) => response3.json())
-                    .then((data3) => {
-                        console.log(data3);
-                        console.log(apiUrl);
-                        // JSX에서 개행 문자를 <br>로 바꾸어 출력
-                        const formattedAnswer = data3.answer.split('\n').map((line, index) => (
-                            <React.Fragment key={index}>
-                                {line}
-                                <br />
-                            </React.Fragment>
-                        ));
-
-                        // 채팅창에 서버 응답 추가  
-                        setChat((prevChat) => [...prevChat, { type: 'bot', text: formattedAnswer }]);
-                    })
-                    .catch((error) => console.error('Error:', error))
-                    .finally(() => {
-                        setLoading(false); // API 호출이 완료되면 로딩 상태를 false로 설정
-                    });
-            }
-
-            return updatedResponses;
-        });
-
-        // 다음 질문이 있는 경우 해당 메시지 추가
-        if (questionIndex < questionData.length) {
-            setTimeout(() => { // 1초 지연을 위해 setTimeout 사용
-                const currentTime = formatTime();
-                setChat((prevChat) => [
-                    ...prevChat,
-                    { type: 'bot', text: questionData[questionIndex], time: currentTime },
-                ]);
-                setQuestionIndex((prevIndex) => prevIndex + 1);
-            }, 1000); // 1초 후 실행
-        }
-
+          setQuestionIndex(questionIndex + 2);
+        }, 1000); // 1초 후 실행
         setUserInput('');
+      })
+      .catch((error) => console.error('Error:', error));
+  }
+
+  function handleProcessQuestionResponse() {
+    if (questionData) {
+      const currentTime = formatTime();
+      // 사용자의 이전 응답 메시지 추가
+      setChat((prevChat) => [
+        ...prevChat,
+        { type: 'user', text: userInput, time: currentTime },
+      ]);
+
+      // 다음 질문이 있는 경우 해당 메시지 추가
+      if (questionIndex < questionData.length) {
+        setTimeout(() => { // 1초 지연을 위해 setTimeout 사용
+          const currentTime = formatTime();
+          setChat((prevChat) => [
+            ...prevChat,
+            { type: 'bot', text: questionData[questionIndex], time: currentTime },
+          ]);
+          setQuestionIndex(questionIndex + 1);
+        }, 1000); // 1초 후 실행
+      }
+
+      // 사용자 응답값을 저장
+      setUserResponses((prevResponses) => [
+        ...prevResponses,
+        userInput,
+      ]);
+
+      setUserInput('');
+
+      // 마지막 질문에 도달한 경우 서버로 전송
+      if (questionIndex === questionData.length) {
+        // allJson 데이터 구조를 '생성'과 '수정' 모드에 따라 다르게 준비
+        let allJson;
+        allJson = {
+          problemNumber: questionDataCount,
+          question: userResponses,
+        };
+
+        // 로딩 상태 설정
+        setLoading(true);
+
+        // 서버 주소를 담을 변수 선언
+        let apiUrl = '';
+
+        // API 엔드포인트를 apiUrl 변수에 할당
+        apiUrl = '/api/8582/unifot';
+
+        // apiUrl을 사용하여 서버에 POST 요청 보내기
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': "application/json",
+          },
+          body: JSON.stringify(allJson),
+        })
+          .then((response3) => response3.json())
+          .then((data3) => {
+            console.log(data3)
+            console.log(apiUrl)
+            // JSX에서 개행 문자를 <br>로 바꾸어 출력
+            const formattedAnswer = data3.answer.split('\n').map((line, index) => (
+              <React.Fragment key={index}>
+                {line}
+                <br />
+              </React.Fragment>
+            ));
+
+            // 채팅창에 서버 응답 추가  
+            setChat((prevChat) => [...prevChat, { type: 'bot', text: formattedAnswer }]);
+          })
+          .catch((error) => console.error('Error:', error))
+          .finally(() => {
+            setLoading(false); // API 호출이 완료되면 로딩 상태를 false로 설정
+          });
+      }
     }
-}
+  }
 
   // 엔터 키를 눌렀을 때 메시지 전송
   function handleInputKeyDown(e) {

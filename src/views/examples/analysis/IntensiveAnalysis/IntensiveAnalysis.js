@@ -1,25 +1,11 @@
 import React, { useEffect, useRef } from "react";
-import classnames from "classnames";
 import {
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  CardImg,
-  FormGroup,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
   Container,
-  Row,
-  Col,
 } from "reactstrap";
 
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import SimpleFooter from "components/Footers/SimpleFooter.js";
 import Search from "./Search.js";
-import Test from "../UniversityTest.js"
 
 function IntensiveAnalysis() {
   const mainRef = useRef(null);
