@@ -28,7 +28,7 @@
   "bugs": {
     "url": "https://github.com/Team-Fusion-X/uniform_fe_main/issues"
   },
-  "homepage": "https://uniform.herokuapp.com",
+  "homepage": "https://uniform-48f6c96c6469.herokuapp.com/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
