@@ -20,12 +20,12 @@ function Record() {
   const [credits, setCredits] = useState('');
   const [rawScore, setRawScore] = useState('');
   const [subjectAverage, setSubjectAverage] = useState('');
-  const [sdeviation, setStandardDeviation] = useState('');
+  const [sDeviation, setStandardDeviation] = useState('');
   const [studentsNumber, setStudentsNumber] = useState('');
   const [rank, setRank] = useState('');
   const [scoreData, setScoreData] = useState({});
   const { mainAverage, setMainAverage, kemrAverage, setKemrAverage } = useAverage();
-
+  
 
   const handleCurriculumChange = (event) => {
     setSelectedCurriculum(event.target.value);
@@ -139,13 +139,14 @@ function Record() {
       "credit": parseInt(credits),
       "rawScore": parseFloat(rawScore),
       "subjectMean": parseFloat(subjectAverage),
-      "sDeviation": parseFloat(sdeviation),
+      "sDeviation": parseFloat(sDeviation),
       "headCount": parseInt(studentsNumber),
       "ranking": parseInt(rank)
     };
     axios.post('api/8482/score', newScore, {withCredentials: true})
     .then(response => {
       // scoreData에 새로운 데이터 추가
+      console.log(newScore)
       const key = `${newScore.schoolYear}-${newScore.schoolTerm}`;
       if (!scoreData[key]) {
         scoreData[key] = [];
@@ -192,6 +193,11 @@ function Record() {
         console.error('데이터를 가져오는 중 오류가 발생했습니다.', error);
       });
   }, []);
+
+  // 과목 조회
+  useEffect(() => {
+    console.log(sDeviation)
+  }, [sDeviation]);
 
   // 평균 성적 가져오기
   useEffect(() => {
@@ -346,7 +352,7 @@ function Record() {
                       id="standardDeviation"
                       placeholder=""
                       type="text"
-                      value={sdeviation}
+                      value={sDeviation}
                       onChange={handleStandardDeviationChange}
                     />
                   </th>

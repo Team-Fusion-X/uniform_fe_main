@@ -22,6 +22,8 @@ jobs:
 
     - name: Build
       run: npm run build  # 프로젝트 빌드
+      env:
+        CI: false  # 이렇게 설정하여 CI 모드를 비활성화
 
     - name: Deploy to Heroku
       uses: akhileshns/heroku-deploy@v3.12.12  # Heroku 배포 액션 사용

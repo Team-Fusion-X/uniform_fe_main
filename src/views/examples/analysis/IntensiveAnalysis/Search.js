@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UniversityFilter from '../UniversityFilter';
-import { Button, Row, Col, Container, Form, FormGroup, Label, Input, Table, Card, CardBody, CardTitle, CardText } from 'reactstrap';
+import { Button, Row, Col, Container, Form, FormGroup, Label, Input, Table, Card, CardBody, CardText } from 'reactstrap';
 import styled from 'styled-components';
 import axios from 'axios';
 
