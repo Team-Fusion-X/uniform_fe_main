@@ -3,7 +3,8 @@ import {
   Input,
   Button
 } from "reactstrap";
-import axios from 'axios'; // Axios 추가
+import axios from 'axios';
+import { useAverage } from './AverageContext';
 
 function Record() {
   const [activeTab, setActiveTab] = useState('1-1');
@@ -23,8 +24,8 @@ function Record() {
   const [studentsNumber, setStudentsNumber] = useState('');
   const [rank, setRank] = useState('');
   const [scoreData, setScoreData] = useState({});
-  const [mainAverage, setMainAverage] = useState('');
-  const [kemrAverage, setKemrAverage] = useState('');
+  const { mainAverage, setMainAverage, kemrAverage, setKemrAverage } = useAverage();
+
 
   const handleCurriculumChange = (event) => {
     setSelectedCurriculum(event.target.value);
@@ -100,7 +101,7 @@ function Record() {
 
   // 국영수탐 총 8과목 있는지 체크하는 함수 있으면 True 없으면 False 
   const checkScore = (key) => {
-    let idxUpdate = new Array(8).fill(0); // 로컬 배열 초기화
+    let idxUpdate = new Array(7).fill(0); // 로컬 배열 초기화
     const subjects = ['국어', '수학', '영어', '사회', '과학'];
     let socialScienceIndex = 3; // 사회와 과학 과목을 위한 시작 인덱스
 
@@ -115,6 +116,9 @@ function Record() {
                     idxUpdate[socialScienceIndex] = 1;
                     socialScienceIndex++; // 다음 사회/과학 과목을 위해 인덱스 증가
                 }
+                if (socialScienceIndex >= 7) {
+                  socialScienceIndex--;
+                };
             }
         }
     });
