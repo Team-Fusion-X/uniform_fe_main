@@ -17,12 +17,12 @@ function Record() {
   const [subjects, setSubjects] = useState({});
   const [selectedCurriculum, setSelectedCurriculum] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('');
-  const [credits, setCredits] = useState('');
+  const [credit, setCredits] = useState('');
   const [rawScore, setRawScore] = useState('');
-  const [subjectAverage, setSubjectAverage] = useState('');
+  const [subjectMean, setSubjectAverage] = useState('');
   const [sDeviation, setStandardDeviation] = useState('');
-  const [studentsNumber, setStudentsNumber] = useState('');
-  const [rank, setRank] = useState('');
+  const [headCount, setStudentsNumber] = useState('');
+  const [ranking, setRank] = useState('');
   const [scoreData, setScoreData] = useState({});
   const { mainAverage, setMainAverage, kemrAverage, setKemrAverage } = useAverage();
   
@@ -94,6 +94,7 @@ function Record() {
         console.log('평균 산정 성공');
       })
       .catch(error => {
+        console.log(formattedData);
         console.error('평균 산정 중 오류가 발생했습니다.', error);
       });
     }
@@ -136,12 +137,12 @@ function Record() {
       "schoolTerm": parseInt(schoolTerm),
       "curriculum": selectedCurriculum,
       "subjectName": selectedSubject,
-      "credit": parseInt(credits),
+      "credit": parseInt(credit),
       "rawScore": parseFloat(rawScore),
-      "subjectMean": parseFloat(subjectAverage),
+      "subjectMean": parseFloat(subjectMean),
       "sdeviation": parseFloat(sDeviation),
-      "headCount": parseInt(studentsNumber),
-      "ranking": parseInt(rank)
+      "headCount": parseInt(headCount),
+      "ranking": parseInt(ranking)
     };
     axios.post('api/8482/score', newScore, {withCredentials: true})
     .then(response => {
@@ -153,13 +154,13 @@ function Record() {
       }
       scoreData[key].push({
         curriculum: newScore.curriculum,
-        subject: newScore.subjectName,
-        credits: newScore.credit,
+        subjectName: newScore.subjectName,
+        credit: newScore.credit,
         rawScore: newScore.rawScore,
-        subjectAverage: newScore.subjectMean,
-        standardDeviation: newScore.sdeviation,
-        studentsNumber: newScore.headCount,
-        rank: newScore.ranking
+        subjectMean: newScore.subjectMean,
+        sdeviation: newScore.sdeviation,
+        headCount: newScore.headCount,
+        ranking: newScore.ranking
       });
       // scoreData state 갱신
       setScoreData({ ...scoreData });
@@ -199,8 +200,10 @@ function Record() {
     axios.get('/api/8482/average', {withCredentials: true})
       .then(response => {
         const data = response.data;
-        setMainAverage(data.allSubjectDgree);
-        setKemrAverage(data.kemrDgree);
+        let roundedNumberallSubject = parseFloat(data.allSubjectDegree.toFixed(2));
+        let roundedNumberkemr = parseFloat(data.kemrDegree.toFixed(2));
+        setMainAverage(roundedNumberallSubject);
+        setKemrAverage(roundedNumberkemr);
       })
       .catch(error => {
         console.error('평균 성적 데이터를 가져오는 중 오류가 발생했습니다.', error);
@@ -222,13 +225,13 @@ function Record() {
           }
           formattedData[key].push({
             curriculum: item.curriculum,
-            subject: item.subjectName,
-            credits: item.credit,
+            subjectName: item.subjectName,
+            credit: item.credit,
             rawScore: item.rawScore,
-            subjectAverage: item.subjectMean,
-            standardDeviation: item.sdeviation,
-            studentsNumber: item.headCount,
-            rank: item.ranking
+            subjectMean: item.subjectMean,
+            sdeviation: item.sdeviation,
+            headCount: item.headCount,
+            ranking: item.ranking
           });
           
         });
@@ -284,13 +287,13 @@ function Record() {
                   scoreData[tab].map((score, index) => (
                     <tr key={index}>
                       <th scope="row">{score.curriculum}</th>
-                      <td>{score.subject}</td>
-                      <td>{score.credits}</td>
+                      <td>{score.subjectName}</td>
+                      <td>{score.credit}</td>
                       <td>{score.rawScore}</td>
-                      <td>{score.subjectAverage}</td>
-                      <td>{score.standardDeviation}</td>
-                      <td>{score.studentsNumber}</td>
-                      <td>{score.rank}</td>
+                      <td>{score.subjectMean}</td>
+                      <td>{score.sdeviation}</td>
+                      <td>{score.headCount}</td>
+                      <td>{score.ranking}</td>
                     </tr>
                   ))
                 ) : (
@@ -310,17 +313,17 @@ function Record() {
                   <th scope="col">
                     <select value={selectedSubject} onChange={handleSubjectChange}>
                       <option value="">과목 선택</option>
-                      {selectedCurriculum && subjects[selectedCurriculum] && subjects[selectedCurriculum].map((subject, index) => (
-                        <option key={index} value={subject}>{subject}</option>
+                      {selectedCurriculum && subjects[selectedCurriculum] && subjects[selectedCurriculum].map((subjectName, index) => (
+                        <option key={index} value={subjectName}>{subjectName}</option>
                       ))}
                     </select>
                   </th>
                   <th scope="col">
                     <Input
-                      id="credits"
+                      id="credit"
                       placeholder=""
                       type="text"
-                      value={credits}
+                      value={credit}
                       onChange={handleCreditsChange}
                     />
                   </th>
@@ -335,16 +338,16 @@ function Record() {
                   </th>
                   <th scope="col">
                     <Input
-                      id="subjectAverage"
+                      id="subjectMean"
                       placeholder=""
                       type="text"
-                      value={subjectAverage}
+                      value={subjectMean}
                       onChange={handleSubjectAverageChange}
                     />
                   </th>
                   <th scope="col">
                     <Input
-                      id="standardDeviation"
+                      id="sdeviation"
                       placeholder=""
                       type="text"
                       value={sDeviation}
@@ -353,19 +356,19 @@ function Record() {
                   </th>
                   <th scope="col">
                     <Input
-                      id="studentsNumber"
+                      id="headCount"
                       placeholder=""
                       type="text"
-                      value={studentsNumber}
+                      value={headCount}
                       onChange={handleStudentsNumberChange}
                     />
                   </th>
                   <th scope="col">
                     <Input
-                      id="rank"
+                      id="ranking"
                       placeholder=""
                       type="text"
-                      value={rank}
+                      value={ranking}
                       onChange={handleRankChange}
                     />
                   </th>
