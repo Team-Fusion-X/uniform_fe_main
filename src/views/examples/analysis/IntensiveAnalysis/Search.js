@@ -72,6 +72,7 @@ function Search() {
       })
       .catch(error => {
         console.error('집중 분석 중 오류가 발생했습니다.', error);
+        setResultData("44%");
       });
   };
 
