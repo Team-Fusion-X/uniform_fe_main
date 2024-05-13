@@ -2,11 +2,11 @@
   "name": "argon-design-system-react",
   "proxy": "http://orion.mokpo.ac.kr:8482",
   "version": "1.1.2",
-  "description": "React version of Argon Design System by Creative Tim",
+  "description": "FuisonX의 Uniform",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/creativetimofficial/argon-design-system-react.git"
+    "url": "https://github.com/Team-Fusion-X/uniform_fe_main"
   },
   "keywords": [
     "react",
@@ -23,12 +23,12 @@
     "argon-design-system-react",
     "design-system-react"
   ],
-  "author": "Creative Tim",
+  "author": "FusionX",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/creativetimofficial/argon-design-system-react/issues"
+    "url": "https://github.com/Team-Fusion-X/uniform_fe_main/issues"
   },
-  "homepage": "https://demos.creative-tim.com/argon-design-system-react/",
+  "homepage": "https://uniform.herokuapp.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
