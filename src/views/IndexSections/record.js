@@ -194,11 +194,6 @@ function Record() {
       });
   }, []);
 
-  // 과목 조회
-  useEffect(() => {
-    console.log(sDeviation)
-  }, [sDeviation]);
-
   // 평균 성적 가져오기
   useEffect(() => {
     axios.get('/api/8482/average', {withCredentials: true})
