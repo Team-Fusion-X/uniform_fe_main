@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './chatBotPage.css';
 import Modal from './modal.js';
+import axios from 'axios';
 
 function ChatBot() {
   const [userInput, setUserInput] = useState(''); // 사용자의 입력을 저장하는 상태
@@ -70,15 +71,9 @@ function ChatBot() {
     setUserInput('');
 
     const apiUrl = '/api/8582/self-introduction';
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': "application/json",
-      },
-      body: JSON.stringify({ UserSelectedType: userInput }),
-    })
-      .then((response) => response.json())
-      .then((data1) => {
+    axios.post(apiUrl, { UserSelectedType: userInput })
+      .then((response) => {
+        const data1 = response.data;
         // 채팅창에 메시지 및 질문 리스트 추가
         setTimeout(() => {
           // 메시지와 질문 리스트의 개행 문자를 처리
@@ -151,15 +146,9 @@ function ChatBot() {
       let apiUrl = '/api/8582/set-unifot'; // '수정' 모드에 맞는 API 엔드포인트
 
       // apiUrl을 사용하여 서버에 POST 요청 보내기
-      fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': "application/json",
-        },
-        body: JSON.stringify(allJson),
-      })
-        .then(response => response.json())
-        .then(data => {
+      axios.post(apiUrl, allJson)
+        .then(response => {
+          const data = response.data;
           console.log(data); // 서버로부터의 응답 처리
           console.log(apiUrl)
           // JSX에서 개행 문자를 <br>로 바꾸어 출력
@@ -195,15 +184,9 @@ function ChatBot() {
     setQuestionCount(3);
     let tmp = userInput;
     // 서버에 두 번째 질문에 대한 사용자 입력값을 POST 요청
-    fetch('http://orion.mokpo.ac.kr:8582/api/self-introduction/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ UserSelectedType: tmp }),
-    })
-      .then((response2) => response2.json())
-      .then((data2) => {
+    axios.post('/api/8582/self-introduction/create', { UserSelectedType: tmp })
+      .then((response) => {
+        const data2 = response.data;
         const currentTime = formatTime();
         // 사용자 입력 메시지와 시간 추가
         setChat((prevChat) => [...prevChat, { type: 'user', text: userInput, time: currentTime }]);
@@ -272,17 +255,11 @@ function ChatBot() {
         apiUrl = '/api/8582/unifot';
 
         // apiUrl을 사용하여 서버에 POST 요청 보내기
-        fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': "application/json",
-          },
-          body: JSON.stringify(allJson),
-        })
-          .then((response3) => response3.json())
-          .then((data3) => {
-            console.log(data3)
-            console.log(apiUrl)
+        axios.post(apiUrl, allJson)
+          .then((response) => {
+            const data3 = response.data;
+            console.log(data3);
+            console.log(apiUrl);
             // JSX에서 개행 문자를 <br>로 바꾸어 출력
             const formattedAnswer = data3.answer.split('\n').map((line, index) => (
               <React.Fragment key={index}>
