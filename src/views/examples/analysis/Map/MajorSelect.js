@@ -61,39 +61,19 @@ export function useSelectMajors() {
     };
 }
 
-export function SelectedMajorsDisplay({ selectedMajors, onRemove }) {
-    return (
-        <Container style={{
-            border: '1px solid #ccc', padding: '0.625rem', marginTop: '1rem', minHeight: '150px', maxHeight: '150px', overflowY: 'auto'
-        }}>
-            {selectedMajors.length > 0 ? (
-                selectedMajors.map((major, index) => (
-                    <div key={index} style={{ padding: '0.1rem 0.5rem', border: '1px solid #ccc', margin: '0.3125rem', display: 'inline-block', marginLeft: '0.625rem', height: '2rem', lineHeight: '2', fontSize: '0.75rem' }}>
-                        <span style={{ flex: '1' }}>{major}</span>
-                        <Button close onClick={() => onRemove(major)} style={{ height: '1.7rem', width: '1rem' }} />
-                    </div>
-                ))
-            ) : (
-                <div>선택된 전공이 없습니다.</div>
-            )}
-        </Container>
-    );
-}
-
 export function MajorSelect({
-    handleSelectChange,
-    selectedMajors,
+    selectedKeyword,
+    setSelectedKeyword,
     selectedKeywords,
     toggleDropdown,
     isOpen,
     setSearch,
     search,
 }) {
-
     return (
-        <Dropdown isOpen={isOpen} toggle={toggleDropdown}>
-            <DropdownToggle caret>
-                학과 키워드 선택
+        <Dropdown isOpen={isOpen} toggle={toggleDropdown} style={{ width: '100%' }}>
+            <DropdownToggle caret style={{ width: '100%' }}>
+                {selectedKeyword || '학과 키워드 선택'}
             </DropdownToggle>
             <DropdownMenu style={{ maxHeight: '250px', overflowY: 'auto' }}>
                 <Input
@@ -101,22 +81,19 @@ export function MajorSelect({
                     placeholder="학과 검색창"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    style={{
-                        margin: '1rem', width: 'auto'
-                    }}
+                    style={{ margin: '1rem', width: 'auto' }}
                 />
                 {selectedKeywords.filter(keyword => keyword.toLowerCase().includes(search.toLowerCase())).map((keyword, index) => (
-                    <div style={{ paddingLeft: '1rem' }}>
-                        <CustomInput
-                            key={`${keyword}-${index}`}
-                            type="checkbox"
-                            id={`keyword-${index}`}
-                            label={keyword}
-                            value={keyword}
-                            checked={selectedMajors.includes(keyword)}
-                            onChange={handleSelectChange}
-                        />
-                    </div>
+                    <DropdownItem
+                        key={index}
+                        onClick={() => {
+                            setSelectedKeyword(keyword);
+                            toggleDropdown();
+                        }}
+                        style={{ paddingLeft: '1rem' }}
+                    >
+                        {keyword}
+                    </DropdownItem>
                 ))}
             </DropdownMenu>
         </Dropdown>
@@ -124,16 +101,20 @@ export function MajorSelect({
 }
 
 export default function MajorSelection({ onSelectionComplete }) {
-    const { handleSelectChange, selectedMajors, toggleDropdown, isOpen, setSearch, search, handleRemoveMajor } = useSelectMajors();
+    const [selectedKeyword, setSelectedKeyword] = useState('');
     const [selectedKeywords, setSelectedKeywords] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+    const [search, setSearch] = useState('');
+
+    const toggleDropdown = () => setIsOpen(!isOpen);
 
     const handleTypeSelected = (keywords) => {
         setSelectedKeywords(keywords);
     };
 
     const handleSubmit = () => {
-        if (onSelectionComplete) {
-            onSelectionComplete(selectedMajors);
+        if (onSelectionComplete && selectedKeyword) {
+            onSelectionComplete(selectedKeyword);
         }
     };
 
@@ -144,10 +125,9 @@ export default function MajorSelection({ onSelectionComplete }) {
                     <TypeSelect onTypeSelected={handleTypeSelected} />
                 </Col>
                 <Col md={6}> {/* 학과 키워드 선택창 */}
-                    <MajorSelect {...{ handleSelectChange, selectedMajors, selectedKeywords, toggleDropdown, isOpen, setSearch, search }} />
+                    <MajorSelect {...{ setSelectedKeyword, selectedKeyword, selectedKeywords, toggleDropdown, isOpen, setSearch, search }} />
                 </Col>
             </Row>
-            <SelectedMajorsDisplay selectedMajors={selectedMajors} onRemove={handleRemoveMajor} />
             <div className="text-center">
                 <Button onClick={handleSubmit} color="primary" style={{ marginTop: '1rem', width: "120px" }}>
                     적용하기
