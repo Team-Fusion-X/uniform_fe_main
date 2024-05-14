@@ -7,6 +7,7 @@ module.exports = function(app) {
       target: 'http://orion.mokpo.ac.kr:8482', // 프록시 대상 서버 주소
       changeOrigin: true,
       pathRewrite: { '^/api/8482': '/api' }, // URL에서 /api/8482 부분을 /api로 재작성
+      secure: false // HTTPS 사이트에서 HTTP 프록시를 사용할 수 있도록 설정
     })
   );
   app.use(
@@ -15,6 +16,7 @@ module.exports = function(app) {
       target: 'http://orion.mokpo.ac.kr:8582', // 프록시 대상 서버 주소
       changeOrigin: true,
       pathRewrite: { '^/api/8582': '/api' }, // URL에서 /api/8582 부분을 /api로 재작성
+      secure: false // HTTPS 사이트에서 HTTP 프록시를 사용할 수 있도록 설정
     })
   );
   app.use(
@@ -23,6 +25,7 @@ module.exports = function(app) {
       target: 'http://114.70.92.44:11030', // 프록시 대상 서버 주소
       changeOrigin: true,
       pathRewrite: { '^/ai/predict': '/predict' },
+      secure: false // HTTPS 사이트에서 HTTP 프록시를 사용할 수 있도록 설정
     })
   );
 };
