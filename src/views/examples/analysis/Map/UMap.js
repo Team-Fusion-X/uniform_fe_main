@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Map, MarkerClusterer, MapMarker, ZoomControl } from "react-kakao-maps-sdk";
 import { CgClose } from "react-icons/cg";
+import axios from 'axios';
 // image and data
 import red_marker from './image/red.png';
 import blue_marker from './image/blue.png';
@@ -38,10 +39,38 @@ const UMap = () => {
 
     // MajorSelect 관련 설정
     const [selectedMajors, setSelectedMajors] = useState([]);
-    const handleSelectionComplete = (majors) => {
-        setSelectedMajors(majors);
-        // 선택된 전공들을 상태에 저장하고 필요한 추가 처리를 할 수 있습니다.
-        console.log('Selected majors:', majors);
+    const [schools, setSchools] = useState(data);
+    const handleSelectionComplete = async (major) => {
+        // majors 상태 업데이트
+        setSelectedMajors(major);
+        console.log('Selected majors:', major);
+
+        // 전공이 있을 경우만 실행
+        if (major.length > 0) {
+            try {
+                const response = await axios.post('http://localhost:5000/api/acceptance_rate', {
+                    field: null,
+                    school: null,
+                    major: null,
+                    keyword: major
+                });
+
+                const acceptanceRate = response.data.acceptance_rate;
+                const updatedSchools = schools.map(school => {
+                    if (school.university === response.data.school) {
+                        return { ...school, pass: acceptanceRate };
+                    }
+                    return school;
+                });
+                setSchools(updatedSchools);
+                console.log('학교:', response.data.school);
+                console.log('계열:', response.data.field);
+                console.log('학과:', response.data.major);
+                console.log('합격률:', acceptanceRate);
+            } catch (error) {
+                console.error('합격률 조회 실패:', error.message);
+            }
+        }
     };
 
     // 합격률에 따라 마커 이미지를 결정하는 함수
