@@ -41,6 +41,13 @@ function FullAnal() {
         setLogoMap(logoMapTemp);
     }, []);
 
+    useEffect(() => {
+        if (selectedDivision) {
+            const filteredDepartments = universityData.filter(item => item.fields === selectedDivision.value);
+            const updatedDepartmentOptions = getFilteredDepartments(filteredDepartments);
+            setDepartmentOptions(updatedDepartmentOptions);
+        }
+    }, [selectedDivision]); // selectedDivision이 변경될 때마다 실행
 
     // 학과 옵션 필터링 로직
     const getFilteredDepartments = (data) => {
@@ -89,6 +96,13 @@ function FullAnal() {
         const uniqueUniversities = Array.from(new Set(filteredUniversities.map(item => item.university)));
         const updatedUniversityOptions = uniqueUniversities.map(university => ({ value: university, label: university }));
         setUniversityOptions(updatedUniversityOptions);
+
+        const filteredDepartments = universityData.filter(item => item.fields === selectedOption.value);
+    const updatedDepartmentOptions = getFilteredDepartments(filteredDepartments);
+    setDepartmentOptions(updatedDepartmentOptions);
+
+    setSelectedUniversity(null);
+    setSelectedDepartment(null);
 
         setSelectedUniversity(null);
         setSelectedDepartment(null);
@@ -144,12 +158,25 @@ function FullAnal() {
         }
     };
 
+    const exportSelectionsToJson = () => {
+        const requestData = [
+            selectedDivision ? selectedDivision.value : null,
+            selectedUniversity ? selectedUniversity.value : null,
+            selectedDepartment ? selectedDepartment.value : null,
+            null
+        ];
+    
+        console.log(JSON.stringify(requestData));  // 콘솔에 JSON 문자열 출력
+        // 실제 애플리케이션에서는 이 부분을 변경하여 서버로 전송하거나 UI에 표시할 수 있습니다.
+    };
+    
     const handleSearchClick = () => {
         setDisplayText({
             division: selectedDivision ? selectedDivision.label : '',
-            university: selectedUniversity ? selectedUniversity.label : '',
+            university: selectedUniversity ? selectedUniversity.web : '',
             department: selectedDepartment ? selectedDepartment.label : ''
         });
+        exportSelectionsToJson();  // 검색 버튼 클릭 시 JSON 출력
     };
 
     let newData = [
