@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import universityData from "../UniversityData.json";
+import MapData from '../Map/json/map_data.json';
 import SearchComponent from "./SearchComponent";
 import "./FullAnal.css";
 
 function FullAnal() {
     const [searchData, setSearchData] = useState([]);
     const [selectedDivision, setSelectedDivision] = useState(null);
+    const [logoMap, setLogoMap] = useState({});
     const [selectedUniversity, setSelectedUniversity] = useState(null);
     const [selectedDepartment, setSelectedDepartment] = useState(null);
 
@@ -29,6 +31,16 @@ function FullAnal() {
 
         setDepartmentOptions(getFilteredDepartments(universityData));
     }, []);
+
+    useEffect(() => {
+        // map_data.json에서 로고 매핑 정보 로드
+        const logoMapTemp = {};
+        MapData.forEach(school => {
+            logoMapTemp[school.university] = school.logo;
+        });
+        setLogoMap(logoMapTemp);
+    }, []);
+
 
     // 학과 옵션 필터링 로직
     const getFilteredDepartments = (data) => {
@@ -142,326 +154,315 @@ function FullAnal() {
 
     let newData = [
         {
-            school: "목포대학교",
+            school: "목포대",
             major: "컴퓨터공학과",
             admissionProbability: "95"
         },
         {
-            school: "안동대학교",
+            school: "안동대",
             major: "문학학과",
             admissionProbability: "65"
         },
         {
-            school: "경기대학교",
+            school: "경기대(수원)",
             major: "신소재공학과",
             admissionProbability: "76"
         },
         {
-            school: "가천대학교",
+            school: "가천대(메디컬)",
             major: "화학공학과",
             admissionProbability: "59"
         },
         {
-            school: "전남대학교",
+            school: "전남대(광주)",
             major: "물리학과",
             admissionProbability: "63"
         },
         {
-            school: "서울과학기술대학교",
+            school: "서울과학기술대",
             major: "전자공학과",
             admissionProbability: "25"
         },
         {
-            school: "성균관대학교",
-            major: "법학과",
-            admissionProbability: "20"
-        },
-        {
-            school: "한양대학교",
+            school: "한양대(에리카)",
             major: "경영학과",
             admissionProbability: "15"
         },
         {
-            school: "연세대학교",
+            school: "연세대(원주)",
             major: "의학과",
             admissionProbability: "22"
         },
         {
-            school: "고려대학교",
+            school: "고려대(서울)",
             major: "정치외교학과",
             admissionProbability: "20"
         },
         {
-            school: "이화여자대학교",
+            school: "이화여대",
             major: "교육학과",
             admissionProbability: "10"
         },
         {
-            school: "서강대학교",
+            school: "서강대",
             major: "물리교육과",
             admissionProbability: "1"
         },
         {
-            school: "서울대학교",
+            school: "서울대",
             major: "철학과",
             admissionProbability: "5"
         },
         {
-            school: "전남대학교",
+            school: "전남대(광주)",
             major: "소프트웨어학과",
             admissionProbability: "38"
         },
         {
-            school: "전북대학교",
+            school: "전북대(특성화)",
             major: "기계공학과",
             admissionProbability: "41"
         },
         {
-            school: "충남대학교",
+            school: "충남대",
             major: "경영학과",
             admissionProbability: "36"
         },
         {
-            school: "충북대학교",
+            school: "충북대",
             major: "회계학과",
             admissionProbability: "32"
         },
         {
-            school: "전북대학교",
+            school: "전북대(전주)",
             major: "기계공학과",
             admissionProbability: "41"
         },
         {
-            school: "경상대학교",
+            school: "경상대",
             major: "물리교육과",
             admissionProbability: "28"
         },
         {
-            school: "전남대학교",
+            school: "전남대(광주)",
             major: "사회교육과",
             admissionProbability: "26"
         },
         {
-            school: "전남대학교",
+            school: "전남대(광주)",
             major: "전자정보공학과",
             admissionProbability: "45"
         },
         {
-            school: "충남대학교",
+            school: "충남대",
             major: "소프트웨어학과",
             admissionProbability: "49"
         },
         {
-            school: "충북대학교",
+            school: "충북대",
             major: "건축공학과",
             admissionProbability: "39"
         },
         {
-            school: "충남대학교",
+            school: "충남대",
             major: "화학공학과",
             admissionProbability: "57"
         },
         {
-            school: "한국해양대학교",
+            school: "한국해양대",
             major: "해양학과",
             admissionProbability: "60"
         },
         {
-            school: "강원대학교",
+            school: "강원대(삼척)",
             major: "산업공학과",
             admissionProbability: "52"
         },
         {
-            school: "경북대학교",
+            school: "경북대",
             major: "컴퓨터공학과",
             admissionProbability: "79"
         },
         {
-            school: "순천대학교",
+            school: "순천대",
             major: "전기공학과",
             admissionProbability: "85"
         },
         {
-            school: "조선대학교",
+            school: "조선대",
             major: "화학공학과",
             admissionProbability: "100"
         },
         {
-            school: "전북대학교",
+            school: "전북대(전주)",
             major: "경제학과",
             admissionProbability: "84"
         },
         {
-            school: "아주대학교",
+            school: "아주대",
             major: "국제학과",
             admissionProbability: "73"
         },
         {
-            school: "한밭대학교",
+            school: "한밭대",
             major: "의학과",
             admissionProbability: "75"
         },
         {
-            school: "충북대학교",
+            school: "충북대",
             major: "사회학과",
             admissionProbability: "78"
         },
         {
-            school: "경북대학교",
+            school: "경북대",
             major: "경영학과",
             admissionProbability: "82"
         },
         {
-            school: "군산대학교",
+            school: "군산대",
             major: "기계공학과",
             admissionProbability: "90"
         },
         {
-            school: "목포대학교",
+            school: "목포대",
             major: "융합소프트웨어학과",
             admissionProbability: "87"
         },
         {
-            school: "건양대학교",
+            school: "건양대",
             major: "정보보안학과",
             admissionProbability: "92"
         },
         {
-            school: "전남대학교",
+            school: "전남대(광주)",
             major: "패션의류학과",
             admissionProbability: "67"
         },
         {
-            school: "전북대학교",
+            school: "전북대(전주)",
             major: "경제학과",
             admissionProbability: "84"
         },
         {
-            school: "충북대학교",
+            school: "충북대",
             major: "사회학과",
             admissionProbability: "78"
         },
         {
-            school: "경북대학교",
+            school: "경북대",
             major: "경영학과",
             admissionProbability: "82"
         },
         {
-            school: "경남대학교",
+            school: "경남대",
             major: "교육학과",
             admissionProbability: "79"
         },
         {
-            school: "안동대학교",
+            school: "안동대",
             major: "예술학과",
             admissionProbability: "74"
         },
         {
-            school: "경기대학교",
+            school: "경기대(서울)",
             major: "신소재공학과",
             admissionProbability: "76"
         },
         {
-            school: "가천대학교",
+            school: "가천대(메디컬)",
             major: "화학공학과",
             admissionProbability: "70"
         },
         {
-            school: "경북대학교",
+            school: "경북대",
             major: "컴퓨터공학과",
             admissionProbability: "79"
         },
         {
-            school: "아주대학교",
+            school: "아주대",
             major: "전기공학과",
             admissionProbability: "70"
         },
         {
-            school: "한밭대학교",
+            school: "한밭대",
             major: "의학과",
             admissionProbability: "75"
         },
         {
-            school: "순천대학교",
+            school: "순천대",
             major: "토목공학과",
             admissionProbability: "89"
         },
         {
-            school: "순천대학교",
+            school: "순천대",
             major: "에너지화학공학과",
             admissionProbability: "97"
         },
         {
-            school: "순천대학교",
+            school: "순천대",
             major: "건축공학과",
             admissionProbability: "86"
         },
         {
-            school: "군산대학교",
+            school: "군산대",
             major: "화학공학과",
             admissionProbability: "88"
         },
         {
-            school: "경남대학교",
+            school: "경남대",
             major: "교육학과",
             admissionProbability: "79"
         },
         {
-            school: "안동대학교",
+            school: "안동대",
             major: "문화학과",
             admissionProbability: "71"
         },
         {
-            school: "경기대학교",
+            school: "경기대(서울)",
             major: "신소재공학과",
             admissionProbability: "76"
         },
         {
-            school: "가천대학교",
+            school: "가천대(메디컬)",
             major: "기계공학과",
             admissionProbability: "62"
         },
         {
-            school: "경북대학교",
+            school: "경북대",
             major: "컴퓨터공학과",
             admissionProbability: "79"
         },
         {
-            school: "경상대학교",
+            school: "경상대",
             major: "철학과",
             admissionProbability: "83"
         },
         {
-            school: "조선대학교",
+            school: "조선대",
             major: "생명공학과",
             admissionProbability: "91"
         },
         {
-            school: "군산대학교",
+            school: "군산대",
             major: "조선해양공학과",
             admissionProbability: "98"
         },
         {
-            school: "한밭대학교",
-            major: "수학교육과",
-            admissionProbability: "69"
-        },
-        {
-            school: "인하대학교",
+            school: "인하대",
             major: "물리학과",
             admissionProbability: "55"
         },
         {
-            school: "경기대학교",
+            school: "경기대(서울)",
             major: "전기공학과",
             admissionProbability: "64"
         },
         {
-            school: "경기대학교",
+            school: "경기대(서울)",
             major: "컴퓨터과학과",
             admissionProbability: "67"
         },
-
         /*
         {
             school: "목포대학교",
@@ -915,16 +916,16 @@ function FullAnal() {
 
                 {/* 버튼 4개가 들어있는 컨테이너 */}
                 <div className="buttonContainer">
-                    <button className="categoryButton" onClick={() => handleButtonClick("여유")}>
+                    <button className="categoryButton1" onClick={() => handleButtonClick("여유")}>
                         여유
                     </button>
-                    <button className="categoryButton" onClick={() => handleButtonClick("적절")}>
+                    <button className="categoryButton2" onClick={() => handleButtonClick("적절")}>
                         적절
                     </button>
-                    <button className="categoryButton" onClick={() => handleButtonClick("도전")}>
+                    <button className="categoryButton3" onClick={() => handleButtonClick("도전")}>
                         도전
                     </button>
-                    <button className="categoryButton" onClick={() => handleButtonClick("위험")}>
+                    <button className="categoryButton4" onClick={() => handleButtonClick("위험")}>
                         위험
                     </button>
                 </div>
@@ -933,14 +934,19 @@ function FullAnal() {
                 <div className="fourColumns">
                     {filteredData.slice(startIndex, startIndex + itemsPerPage).map((item, index) => (
                         <div className="column" key={index}>
-                            <div className={`box ${getColorClass(item.category)}`}>{item.school}</div>
-                            <div className={`box ${getColorClass(item.category)}`}>{item.major}</div>
+                            <div className={`box1`}>
+                                <img src={logoMap[item.school]} alt={`${item.school} logo`} style={{ height: "50px", marginRight: "10px", verticalAlign: "middle" }} />
+                            </div>
+                            <div className={`box2 ${getColorClass(item.category)}`}>
+                                {item.school}
+                            </div>
+                            <div className={`box3 ${getColorClass(item.category)}`}>{item.major}</div>
                             <div className="progressBarContainer">
                                 <div className={`progressBar ${getColorClass(item.category)}`} style={{ width: `${item.admissionProbability}%` }}>
                                     <span className="progressText">{item.admissionProbability}%</span>
                                 </div>
                             </div>
-                            <div className={`box category-${getColorClass(item.category)}`}>{item.category}</div>
+                            <div className={`box4 category-${getColorClass(item.category)}`}>{item.category}</div>
                         </div>
                     ))}
                 </div>
@@ -1330,59 +1336,59 @@ function FullAnal() {
                 </div>
 
                 {/* 버튼 4개가 들어있는 컨테이너 *//*}
-                <div className="buttonContainer">
-                    <button className="categoryButton" onClick={() => handleButtonClick("여유")}>
-                        여유
-                    </button>
-                    <button className="categoryButton" onClick={() => handleButtonClick("적절")}>
-                        적절
-                    </button>
-                    <button className="categoryButton" onClick={() => handleButtonClick("도전")}>
-                        도전
-                    </button>
-                    <button className="categoryButton" onClick={() => handleButtonClick("위험")}>
-                        위험
-                    </button>
-                </div>
-            </div>
-            <div className="contentBelow">
-                <div className="fourColumns">
-                    {filteredData.slice(startIndex, startIndex + itemsPerPage).map((item, index) => (
-                        <div className="column" key={index}>
-                            <div className={`box ${getColorClass(item.category)}`}>{item.school}</div>
-                            <div className={`box ${getColorClass(item.category)}`}>{item.major}</div>
-                            <div className="progressBarContainer">
-                                <div className={`progressBar ${getColorClass(item.category)}`} style={{ width: `${item.admissionProbability}%` }}>
-                                    <span className="progressText">{item.admissionProbability}%</span>
-                                </div>
-                            </div>
-                            <div className={`box category-${getColorClass(item.category)}`}>{item.category}</div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+<div className="buttonContainer">
+<button className="categoryButton" onClick={() => handleButtonClick("여유")}>
+여유
+</button>
+<button className="categoryButton" onClick={() => handleButtonClick("적절")}>
+적절
+</button>
+<button className="categoryButton" onClick={() => handleButtonClick("도전")}>
+도전
+</button>
+<button className="categoryButton" onClick={() => handleButtonClick("위험")}>
+위험
+</button>
+</div>
+</div>
+<div className="contentBelow">
+<div className="fourColumns">
+{filteredData.slice(startIndex, startIndex + itemsPerPage).map((item, index) => (
+<div className="column" key={index}>
+<div className={`box ${getColorClass(item.category)}`}>{item.school}</div>
+<div className={`box ${getColorClass(item.category)}`}>{item.major}</div>
+<div className="progressBarContainer">
+<div className={`progressBar ${getColorClass(item.category)}`} style={{ width: `${item.admissionProbability}%` }}>
+    <span className="progressText">{item.admissionProbability}%</span>
+</div>
+</div>
+<div className={`box category-${getColorClass(item.category)}`}>{item.category}</div>
+</div>
+))}
+</div>
+</div>
 
-            {/* 이전 버튼과 다음 버튼 사이에 페이지 수 표시 *//*}
-            <div className="pagination">
-                <button className="previousButton" onClick={handlePreviousButtonClick} disabled={currentPage === 1}>
-                    &lt;
-                </button>
-                {renderPageNumbers()}
-                <button className="nextButton" onClick={handleNextButtonClick} disabled={currentPage === totalPages}>
-                    &gt;
-                </button>
-            </div>
+{/* 이전 버튼과 다음 버튼 사이에 페이지 수 표시 *//*}
+<div className="pagination">
+    <button className="previousButton" onClick={handlePreviousButtonClick} disabled={currentPage === 1}>
+        &lt;
+    </button>
+    {renderPageNumbers()}
+    <button className="nextButton" onClick={handleNextButtonClick} disabled={currentPage === totalPages}>
+        &gt;
+    </button>
+</div>
 
-            {/* 모달 표시 *//*}
-            {loading && (
-                <div className="FullAnalModal">
-                    <div className="FullAnalModalContent">
-                        <Modal closeModal={closeModal} />
-                    </div>
-                </div>
-            )}
+{/* 모달 표시 *//*}
+{loading && (
+    <div className="FullAnalModal">
+        <div className="FullAnalModalContent">
+            <Modal closeModal={closeModal} />
         </div>
-    );
+    </div>
+)}
+</div>
+);
 }
 
 export default FullAnal/*;*/
