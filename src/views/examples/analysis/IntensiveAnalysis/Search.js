@@ -10,7 +10,6 @@ function Search() {
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedUniversity, setSelectedUniversity] = useState(null);
   const [resultData, setResultData] = useState("");
-  const [postData, setPostData] = useState({});
 
   const StyledTable = styled(Table)`
   border-collapse: separate; 
@@ -57,23 +56,22 @@ function Search() {
     uniqueDepartments, setDepartment, 
     uniqueUniversities, setUniversity } = UniversityFilter();
 
-    const handleSubmit = () => {
-      // let postData = {
-      //   "field":selectedFields,
-      //   "keyword":selectedKeyword,
-      //   "university":selectedDepartment,
-      //   "department":selectedUniversity
-      // };
-      // setResultData("16%");http://114.70.92.44:11030/predict
-      axios.post('/ai/predict', postData, {withCredentials: true})
-      .then(response => {
-        const passRate = response.data["합격 확률"];
-        setResultData(passRate);
-      })
-      .catch(error => {
-        console.error('집중 분석 중 오류가 발생했습니다.', error);
-        setResultData("44%");
-      });
+  const handleSubmit = () => {
+    let postData = {
+      "university":selectedUniversity,
+      "department":selectedDepartment,
+      "hope":"종합"
+    };
+    console.log(postData)
+    axios.post('/api/8482/analysis/one', postData, {withCredentials: true})
+    .then(response => {
+      const passRate = response.data["possibility"];
+      setResultData(passRate);
+    })
+    .catch(error => {
+      console.error('집중 분석 중 오류가 발생했습니다.', error);
+      setResultData("오류 발생");
+    });
   };
 
   useEffect(() => {
@@ -93,45 +91,6 @@ function Search() {
     setUniversity(selectedUniversity);
     setSelectedDepartment(null);
   }, [selectedUniversity]);
-
-  // // 평균 성적 가져오기
-  // useEffect(() => {
-  //   axios.get('/api/8482/average', {withCredentials: true})
-  //     .then(response => {
-  //       const data = response.data;
-        
-  //     })
-  //     .catch(error => {
-  //       console.error('평균 성적 데이터를 가져오는 중 오류가 발생했습니다.', error);
-  //     });
-  // }, []);
-  
-  // 평균 성적 가져오기
-  useEffect(() => {
-    axios.get('/api/8482/average', { withCredentials: true })
-      .then(response => {
-        const data = response.data;
-        const fomattedData = {
-          "data_list": [
-            selectedUniversity,
-            selectedDepartment,
-            "종합",
-            data.allSubjectDegree, // 전과목 평균 등급
-            data.kemsoDegree, // 국영수사 평균 등급
-            data.kemsDegree, // 국영수과 평균 등급
-            data.kemrPercentile, // 백분위
-            data.kemrDegree // 평균 등급은
-          ]
-        };
-
-
-        // postData를 상태로 설정하거나 다른 로직 사용
-        setPostData(fomattedData);
-      })
-      .catch(error => {
-        console.error('평균 성적 데이터를 가져오는 중 오류가 발생했습니다.', error);
-      });
-  }, []);
 
   return (
     <Container>
@@ -274,24 +233,6 @@ function Search() {
               </tr>
             </tbody>
           </StyledTable2>
-        )}
-        {resultData && (
-        <Row>
-          <Col>
-            <Card>
-              <CardBody>
-                <CardText className='h4'>여기에 가장 상승폭이 높은 과목을 공부하는 것을 추천</CardText>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col>
-            <Card>
-              <CardBody>
-                <CardText className='h4'>합격 확률이 70% 미만일 경우 전과목 기준 몇 등급이어야 하는지 알려주기</CardText>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
         )}
       </Form>
     </Container>
