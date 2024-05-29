@@ -19,13 +19,4 @@ module.exports = function(app) {
       secure: false // HTTPS 사이트에서 HTTP 프록시를 사용할 수 있도록 설정
     })
   );
-  app.use(
-    '/ai/predict', // ai 서버
-    createProxyMiddleware({
-      target: 'http://114.70.92.44:11030', // 프록시 대상 서버 주소
-      changeOrigin: true,
-      pathRewrite: { '^/ai/predict': '/predict' },
-      secure: false // HTTPS 사이트에서 HTTP 프록시를 사용할 수 있도록 설정
-    })
-  );
 };
