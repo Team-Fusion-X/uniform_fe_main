@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import universityData from "../UniversityData.json";
 import MapData from '../Map/json/map_data.json';
 import SearchComponent from "./SearchComponent";
+import axios from 'axios';
 import "./FullAnal.css";
 
 function FullAnal() {
@@ -164,7 +165,7 @@ function FullAnal() {
             university: selectedUniversity ? selectedUniversity.label : '',
             department: selectedDepartment ? selectedDepartment.label : ''
         });
-
+    
         // 서버가 요구하는 키 이름으로 객체 구성
         const jsonData = {
             field: selectedDivision ? selectedDivision.value : null,
@@ -173,36 +174,31 @@ function FullAnal() {
             keyword: null
         };
         console.log('Sending data to server:', jsonData);
-
-        fetch('/api/8482/analysis', {
-            method: 'POST',
-            credentials: 'include',
+    
+        axios.post('/api/8482/analysis', jsonData, {
+            withCredentials: true,
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsonData)
+            }
         })
-            .then(response => {
-                if (!response.ok) {
-                    response.text().then(text => console.error('Server responded with:', response.status, response.statusText, 'Message:', text));
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('분석 결과:', data);
-                // 서버로부터 받은 데이터로 상태 업데이트
-                setData(data.map(item => ({
-                    ...item,
-                    category: getCategory(item.possibility),
-                })));
-                setTotalPages(Math.ceil(data.length / itemsPerPage));
-                // 필터링 된 데이터 상태 초기화 (새로운 데이터에 맞게 UI 업데이트)
-                setFilteredData([]);
-            })
-            .catch(error => {
-                console.error('분석 중 오류가 발생했습니다.', error);
-            });
+        .then(response => {
+            console.log('분석 결과:', response.data);
+            // 서버로부터 받은 데이터로 상태 업데이트
+            setData(response.data.map(item => ({
+                ...item,
+                category: getCategory(item.possibility),
+            })));
+            setTotalPages(Math.ceil(response.data.length / itemsPerPage));
+            // 필터링 된 데이터 상태 초기화 (새로운 데이터에 맞게 UI 업데이트)
+            setFilteredData([]);
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error('Server responded with:', error.response.status, error.response.statusText, 'Message:', error.response.data);
+            } else {
+                console.error('분석 중 오류가 발생했습니다.', error.message);
+            }
+        });
     };
 
     const [data, setData] = useState([]);
