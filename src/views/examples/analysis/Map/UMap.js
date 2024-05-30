@@ -9,6 +9,7 @@ import green_marker from './image/green.png';
 import yellow_marker from './image/yellow.png';
 import data from './json/test_user_data.json';
 //pages
+import MapInfo from './MapInfo';
 import SearchBar from './SearchBar';
 import MajorSelection from './MajorSelect';
 
@@ -109,8 +110,9 @@ const UMap = () => {
             <div style={{ display: "flex", height: "550px" }}>
                 <div style={{ width: "30%", background: "#f9f9f9", padding: "20px" }}>
                     {/* 왼쪽 패널 */}
-                    <SearchBar onSearch={handleSearch} />
+                    <MapInfo />
                     <MajorSelection onSelectionComplete={handleSelectionComplete} />
+                    <SearchBar onSearch={handleSearch} />
                 </div>
                 <div style={{ width: "70%" }}>
                     <Map
