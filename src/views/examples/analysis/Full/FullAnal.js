@@ -98,11 +98,11 @@ function FullAnal() {
         setUniversityOptions(updatedUniversityOptions);
 
         const filteredDepartments = universityData.filter(item => item.fields === selectedOption.value);
-    const updatedDepartmentOptions = getFilteredDepartments(filteredDepartments);
-    setDepartmentOptions(updatedDepartmentOptions);
+        const updatedDepartmentOptions = getFilteredDepartments(filteredDepartments);
+        setDepartmentOptions(updatedDepartmentOptions);
 
-    setSelectedUniversity(null);
-    setSelectedDepartment(null);
+        setSelectedUniversity(null);
+        setSelectedDepartment(null);
 
         setSelectedUniversity(null);
         setSelectedDepartment(null);
@@ -158,661 +158,52 @@ function FullAnal() {
         }
     };
 
-    const exportSelectionsToJson = () => {
-        const requestData = [
-            selectedDivision ? selectedDivision.value : null,
-            selectedUniversity ? selectedUniversity.value : null,
-            selectedDepartment ? selectedDepartment.value : null,
-            null
-        ];
-    
-        console.log(JSON.stringify(requestData));  // 콘솔에 JSON 문자열 출력
-        // 실제 애플리케이션에서는 이 부분을 변경하여 서버로 전송하거나 UI에 표시할 수 있습니다.
-    };
-    
     const handleSearchClick = () => {
         setDisplayText({
             division: selectedDivision ? selectedDivision.label : '',
-            university: selectedUniversity ? selectedUniversity.web : '',
+            university: selectedUniversity ? selectedUniversity.label : '',
             department: selectedDepartment ? selectedDepartment.label : ''
         });
-        exportSelectionsToJson();  // 검색 버튼 클릭 시 JSON 출력
-    };
 
-    let newData = [
-        {
-            school: "목포대",
-            major: "컴퓨터공학과",
-            admissionProbability: "95"
-        },
-        {
-            school: "안동대",
-            major: "문학학과",
-            admissionProbability: "65"
-        },
-        {
-            school: "경기대(수원)",
-            major: "신소재공학과",
-            admissionProbability: "76"
-        },
-        {
-            school: "가천대(메디컬)",
-            major: "화학공학과",
-            admissionProbability: "59"
-        },
-        {
-            school: "전남대(광주)",
-            major: "물리학과",
-            admissionProbability: "63"
-        },
-        {
-            school: "서울과학기술대",
-            major: "전자공학과",
-            admissionProbability: "25"
-        },
-        {
-            school: "한양대(에리카)",
-            major: "경영학과",
-            admissionProbability: "15"
-        },
-        {
-            school: "연세대(원주)",
-            major: "의학과",
-            admissionProbability: "22"
-        },
-        {
-            school: "고려대(서울)",
-            major: "정치외교학과",
-            admissionProbability: "20"
-        },
-        {
-            school: "이화여대",
-            major: "교육학과",
-            admissionProbability: "10"
-        },
-        {
-            school: "서강대",
-            major: "물리교육과",
-            admissionProbability: "1"
-        },
-        {
-            school: "서울대",
-            major: "철학과",
-            admissionProbability: "5"
-        },
-        {
-            school: "전남대(광주)",
-            major: "소프트웨어학과",
-            admissionProbability: "38"
-        },
-        {
-            school: "전북대(특성화)",
-            major: "기계공학과",
-            admissionProbability: "41"
-        },
-        {
-            school: "충남대",
-            major: "경영학과",
-            admissionProbability: "36"
-        },
-        {
-            school: "충북대",
-            major: "회계학과",
-            admissionProbability: "32"
-        },
-        {
-            school: "전북대(전주)",
-            major: "기계공학과",
-            admissionProbability: "41"
-        },
-        {
-            school: "경상대",
-            major: "물리교육과",
-            admissionProbability: "28"
-        },
-        {
-            school: "전남대(광주)",
-            major: "사회교육과",
-            admissionProbability: "26"
-        },
-        {
-            school: "전남대(광주)",
-            major: "전자정보공학과",
-            admissionProbability: "45"
-        },
-        {
-            school: "충남대",
-            major: "소프트웨어학과",
-            admissionProbability: "49"
-        },
-        {
-            school: "충북대",
-            major: "건축공학과",
-            admissionProbability: "39"
-        },
-        {
-            school: "충남대",
-            major: "화학공학과",
-            admissionProbability: "57"
-        },
-        {
-            school: "한국해양대",
-            major: "해양학과",
-            admissionProbability: "60"
-        },
-        {
-            school: "강원대(삼척)",
-            major: "산업공학과",
-            admissionProbability: "52"
-        },
-        {
-            school: "경북대",
-            major: "컴퓨터공학과",
-            admissionProbability: "79"
-        },
-        {
-            school: "순천대",
-            major: "전기공학과",
-            admissionProbability: "85"
-        },
-        {
-            school: "조선대",
-            major: "화학공학과",
-            admissionProbability: "100"
-        },
-        {
-            school: "전북대(전주)",
-            major: "경제학과",
-            admissionProbability: "84"
-        },
-        {
-            school: "아주대",
-            major: "국제학과",
-            admissionProbability: "73"
-        },
-        {
-            school: "한밭대",
-            major: "의학과",
-            admissionProbability: "75"
-        },
-        {
-            school: "충북대",
-            major: "사회학과",
-            admissionProbability: "78"
-        },
-        {
-            school: "경북대",
-            major: "경영학과",
-            admissionProbability: "82"
-        },
-        {
-            school: "군산대",
-            major: "기계공학과",
-            admissionProbability: "90"
-        },
-        {
-            school: "목포대",
-            major: "융합소프트웨어학과",
-            admissionProbability: "87"
-        },
-        {
-            school: "건양대",
-            major: "정보보안학과",
-            admissionProbability: "92"
-        },
-        {
-            school: "전남대(광주)",
-            major: "패션의류학과",
-            admissionProbability: "67"
-        },
-        {
-            school: "전북대(전주)",
-            major: "경제학과",
-            admissionProbability: "84"
-        },
-        {
-            school: "충북대",
-            major: "사회학과",
-            admissionProbability: "78"
-        },
-        {
-            school: "경북대",
-            major: "경영학과",
-            admissionProbability: "82"
-        },
-        {
-            school: "경남대",
-            major: "교육학과",
-            admissionProbability: "79"
-        },
-        {
-            school: "안동대",
-            major: "예술학과",
-            admissionProbability: "74"
-        },
-        {
-            school: "경기대(서울)",
-            major: "신소재공학과",
-            admissionProbability: "76"
-        },
-        {
-            school: "가천대(메디컬)",
-            major: "화학공학과",
-            admissionProbability: "70"
-        },
-        {
-            school: "경북대",
-            major: "컴퓨터공학과",
-            admissionProbability: "79"
-        },
-        {
-            school: "아주대",
-            major: "전기공학과",
-            admissionProbability: "70"
-        },
-        {
-            school: "한밭대",
-            major: "의학과",
-            admissionProbability: "75"
-        },
-        {
-            school: "순천대",
-            major: "토목공학과",
-            admissionProbability: "89"
-        },
-        {
-            school: "순천대",
-            major: "에너지화학공학과",
-            admissionProbability: "97"
-        },
-        {
-            school: "순천대",
-            major: "건축공학과",
-            admissionProbability: "86"
-        },
-        {
-            school: "군산대",
-            major: "화학공학과",
-            admissionProbability: "88"
-        },
-        {
-            school: "경남대",
-            major: "교육학과",
-            admissionProbability: "79"
-        },
-        {
-            school: "안동대",
-            major: "문화학과",
-            admissionProbability: "71"
-        },
-        {
-            school: "경기대(서울)",
-            major: "신소재공학과",
-            admissionProbability: "76"
-        },
-        {
-            school: "가천대(메디컬)",
-            major: "기계공학과",
-            admissionProbability: "62"
-        },
-        {
-            school: "경북대",
-            major: "컴퓨터공학과",
-            admissionProbability: "79"
-        },
-        {
-            school: "경상대",
-            major: "철학과",
-            admissionProbability: "83"
-        },
-        {
-            school: "조선대",
-            major: "생명공학과",
-            admissionProbability: "91"
-        },
-        {
-            school: "군산대",
-            major: "조선해양공학과",
-            admissionProbability: "98"
-        },
-        {
-            school: "인하대",
-            major: "물리학과",
-            admissionProbability: "55"
-        },
-        {
-            school: "경기대(서울)",
-            major: "전기공학과",
-            admissionProbability: "64"
-        },
-        {
-            school: "경기대(서울)",
-            major: "컴퓨터과학과",
-            admissionProbability: "67"
-        },
-        /*
-        {
-            school: "목포대학교",
-            major: "컴퓨터공학과",
-            admissionProbability: "95"
-        },
-        {
-            school: "안동대학교",
-            major: "문학학과",
-            admissionProbability: "65"
-        },
-        {
-            school: "경기대학교",
-            major: "신소재공학과",
-            admissionProbability: "76"
-        },
-        {
-            school: "가천대학교",
-            major: "화학공학과",
-            admissionProbability: "59"
-        },
-        {
-            school: "전남대학교",
-            major: "물리학과",
-            admissionProbability: "63"
-        },
-        {
-            school: "서울과학기술대학교",
-            major: "전자공학과",
-            admissionProbability: "25"
-        },
-        {
-            school: "성균관대학교",
-            major: "법학과",
-            admissionProbability: "20"
-        },
-        {
-            school: "한양대학교",
-            major: "경영학과",
-            admissionProbability: "15"
-        },
-        {
-            school: "연세대학교",
-            major: "의학과",
-            admissionProbability: "22"
-        },
-        {
-            school: "고려대학교",
-            major: "정치외교학과",
-            admissionProbability: "20"
-        },
-        {
-            school: "이화여자대학교",
-            major: "교육학과",
-            admissionProbability: "10"
-        },
-        {
-            school: "서강대학교",
-            major: "물리교육과",
-            admissionProbability: "1"
-        },
-        {
-            school: "서울대학교",
-            major: "철학과",
-            admissionProbability: "5"
-        },
-        {
-            school: "전남대학교",
-            major: "소프트웨어학과",
-            admissionProbability: "38"
-        },
-        {
-            school: "전북대학교",
-            major: "기계공학과",
-            admissionProbability: "41"
-        },
-        {
-            school: "충남대학교",
-            major: "경영학과",
-            admissionProbability: "36"
-        },
-        {
-            school: "충북대학교",
-            major: "회계학과",
-            admissionProbability: "32"
-        },
-        {
-            school: "전북대학교",
-            major: "기계공학과",
-            admissionProbability: "41"
-        },
-        {
-            school: "경상대학교",
-            major: "물리교육과",
-            admissionProbability: "28"
-        },
-        {
-            school: "전남대학교",
-            major: "사회교육과",
-            admissionProbability: "26"
-        },
-        {
-            school: "전남대학교",
-            major: "전자정보공학과",
-            admissionProbability: "45"
-        },
-        {
-            school: "충남대학교",
-            major: "소프트웨어학과",
-            admissionProbability: "49"
-        },
-        {
-            school: "충북대학교",
-            major: "건축공학과",
-            admissionProbability: "39"
-        },
-        {
-            school: "충남대학교",
-            major: "화학공학과",
-            admissionProbability: "57"
-        },
-        {
-            school: "한국해양대학교",
-            major: "해양학과",
-            admissionProbability: "60"
-        },
-        {
-            school: "강원대학교",
-            major: "산업공학과",
-            admissionProbability: "52"
-        },
-        {
-            school: "경북대학교",
-            major: "컴퓨터공학과",
-            admissionProbability: "79"
-        },
-        {
-            school: "순천대학교",
-            major: "전기공학과",
-            admissionProbability: "85"
-        },
-        {
-            school: "조선대학교",
-            major: "화학공학과",
-            admissionProbability: "100"
-        },
-        {
-            school: "전북대학교",
-            major: "경제학과",
-            admissionProbability: "84"
-        },
-        {
-            school: "아주대학교",
-            major: "국제학과",
-            admissionProbability: "73"
-        },
-        {
-            school: "한밭대학교",
-            major: "의학과",
-            admissionProbability: "75"
-        },
-        {
-            school: "충북대학교",
-            major: "사회학과",
-            admissionProbability: "78"
-        },
-        {
-            school: "경북대학교",
-            major: "경영학과",
-            admissionProbability: "82"
-        },
-        {
-            school: "군산대학교",
-            major: "기계공학과",
-            admissionProbability: "90"
-        },
-        {
-            school: "목포대학교",
-            major: "융합소프트웨어학과",
-            admissionProbability: "87"
-        },
-        {
-            school: "건양대학교",
-            major: "정보보안학과",
-            admissionProbability: "92"
-        },
-        {
-            school: "전남대학교",
-            major: "패션의류학과",
-            admissionProbability: "67"
-        },
-        {
-            school: "전북대학교",
-            major: "경제학과",
-            admissionProbability: "84"
-        },
-        {
-            school: "충북대학교",
-            major: "사회학과",
-            admissionProbability: "78"
-        },
-        {
-            school: "경북대학교",
-            major: "경영학과",
-            admissionProbability: "82"
-        },
-        {
-            school: "경남대학교",
-            major: "교육학과",
-            admissionProbability: "79"
-        },
-        {
-            school: "안동대학교",
-            major: "예술학과",
-            admissionProbability: "74"
-        },
-        {
-            school: "경기대학교",
-            major: "신소재공학과",
-            admissionProbability: "76"
-        },
-        {
-            school: "가천대학교",
-            major: "화학공학과",
-            admissionProbability: "70"
-        },
-        {
-            school: "경북대학교",
-            major: "컴퓨터공학과",
-            admissionProbability: "79"
-        },
-        {
-            school: "아주대학교",
-            major: "전기공학과",
-            admissionProbability: "70"
-        },
-        {
-            school: "한밭대학교",
-            major: "의학과",
-            admissionProbability: "75"
-        },
-        {
-            school: "순천대학교",
-            major: "토목공학과",
-            admissionProbability: "89"
-        },
-        {
-            school: "순천대학교",
-            major: "에너지화학공학과",
-            admissionProbability: "97"
-        },
-        {
-            school: "순천대학교",
-            major: "건축공학과",
-            admissionProbability: "86"
-        },
-        {
-            school: "군산대학교",
-            major: "화학공학과",
-            admissionProbability: "88"
-        },
-        {
-            school: "경남대학교",
-            major: "교육학과",
-            admissionProbability: "79"
-        },
-        {
-            school: "안동대학교",
-            major: "문화학과",
-            admissionProbability: "71"
-        },
-        {
-            school: "경기대학교",
-            major: "신소재공학과",
-            admissionProbability: "76"
-        },
-        {
-            school: "가천대학교",
-            major: "기계공학과",
-            admissionProbability: "62"
-        },
-        {
-            school: "경북대학교",
-            major: "컴퓨터공학과",
-            admissionProbability: "79"
-        },
-        {
-            school: "경상대학교",
-            major: "철학과",
-            admissionProbability: "83"
-        },
-        {
-            school: "조선대학교",
-            major: "생명공학과",
-            admissionProbability: "91"
-        },
-        {
-            school: "군산대학교",
-            major: "조선해양공학과",
-            admissionProbability: "98"
-        },
-        {
-            school: "한밭대학교",
-            major: "수학교육과",
-            admissionProbability: "69"
-        },
-        {
-            school: "인하대학교",
-            major: "물리학과",
-            admissionProbability: "55"
-        },
-        {
-            school: "경기대학교",
-            major: "전기공학과",
-            admissionProbability: "64"
-        },
-        {
-            school: "경기대학교",
-            major: "컴퓨터과학과",
-            admissionProbability: "67"
-        },
-        */
-    ];
+        // 서버가 요구하는 키 이름으로 객체 구성
+        const jsonData = {
+            field: selectedDivision ? selectedDivision.value : null,
+            university: selectedUniversity ? selectedUniversity.value : null,
+            major: selectedDepartment ? selectedDepartment.value : null,
+            keyword: null
+        };
+        console.log('Sending data to server:', jsonData);
+
+        fetch('/api/8482/analysis', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    response.text().then(text => console.error('Server responded with:', response.status, response.statusText, 'Message:', text));
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('분석 결과:', data);
+                // 서버로부터 받은 데이터로 상태 업데이트
+                setData(data.map(item => ({
+                    ...item,
+                    category: getCategory(item.possibility),
+                })));
+                setTotalPages(Math.ceil(data.length / itemsPerPage));
+                // 필터링 된 데이터 상태 초기화 (새로운 데이터에 맞게 UI 업데이트)
+                setFilteredData([]);
+            })
+            .catch(error => {
+                console.error('분석 중 오류가 발생했습니다.', error);
+            });
+    };
 
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -825,19 +216,13 @@ function FullAnal() {
     }, [data]);
 
     useEffect(() => {
-        // admissionProbability에 따라 category 자동 분류
-        const categorizedData = newData.map(item => ({
-            ...item,
-            category: getCategory(item.admissionProbability),
-        }));
-        setData(categorizedData);
-        setTotalPages(Math.ceil(categorizedData.length / itemsPerPage));
-    }, []);
+        setTotalPages(Math.ceil(filteredData.length / itemsPerPage));
+    }, [filteredData]);
 
-    const getCategory = (probability) => {
-        if (probability >= 75) return "여유";
-        if (probability >= 50) return "적절";
-        if (probability >= 21) return "도전";
+    const getCategory = (possibility) => {
+        if (possibility >= 75) return "여유";
+        if (possibility >= 50) return "적절";
+        if (possibility >= 21) return "도전";
         return "위험";
     };
 
@@ -845,7 +230,7 @@ function FullAnal() {
         const filteredData = data.filter(item => item.category === category);
         setFilteredData(filteredData);
         // 합격률에 따라 내림차순 정렬
-        filteredData.sort((a, b) => b.admissionProbability - a.admissionProbability);
+        filteredData.sort((a, b) => b.possibility - a.possibility);
         setFilteredData(filteredData);
         setCurrentPage(1); // 데이터 필터링 후 첫 페이지로 초기화
     };
@@ -1386,7 +771,7 @@ function FullAnal() {
 <div className={`box ${getColorClass(item.category)}`}>{item.major}</div>
 <div className="progressBarContainer">
 <div className={`progressBar ${getColorClass(item.category)}`} style={{ width: `${item.admissionProbability}%` }}>
-    <span className="progressText">{item.admissionProbability}%</span>
+<span className="progressText">{item.admissionProbability}%</span>
 </div>
 </div>
 <div className={`box category-${getColorClass(item.category)}`}>{item.category}</div>
