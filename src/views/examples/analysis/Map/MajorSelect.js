@@ -12,7 +12,7 @@ export function TypeSelect({ onTypeSelected }) {
         setSelectedType(type);
         const selectedData = data.find(item => item.fields === type);
         const keywords = selectedData && selectedData.keywords ? selectedData.keywords.split(',') : [];
-        onTypeSelected(keywords); // 선택된 키워드를 상위 컴포넌트로 전달
+        onTypeSelected(type, keywords); // 선택된 키워드를 상위 컴포넌트로 전달
     };
 
     return (
@@ -103,18 +103,20 @@ export function MajorSelect({
 export default function MajorSelection({ onSelectionComplete }) {
     const [selectedKeyword, setSelectedKeyword] = useState('');
     const [selectedKeywords, setSelectedKeywords] = useState([]);
+    const [selectedField, setSelectedField] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 
-    const handleTypeSelected = (keywords) => {
+    const handleTypeSelected = (field, keywords) => {
+        setSelectedField(field);
         setSelectedKeywords(keywords);
     };
 
     const handleSubmit = () => {
-        if (onSelectionComplete && selectedKeyword) {
-            onSelectionComplete(selectedKeyword);
+        if (onSelectionComplete && selectedKeyword && selectedField) {
+            onSelectionComplete(selectedField, selectedKeyword);
         }
     };
 
