@@ -41,36 +41,35 @@ const UMap = () => {
     // MajorSelect 관련 설정
     const [selectedMajors, setSelectedMajors] = useState([]);
     const [schools, setSchools] = useState(data);
-    const handleSelectionComplete = async (major) => {
+    const handleSelectionComplete = async (field, keyword) => {
         // majors 상태 업데이트
-        setSelectedMajors(major);
-        console.log('Selected majors:', major);
+        setSelectedMajors(field);
+        console.log('Selected field:', field);
+        console.log('Selected keyword:', keyword);
+
 
         // 전공이 있을 경우만 실행
-        if (major.length > 0) {
-            try {
-                const response = await axios.post('http://localhost:5000/api/acceptance_rate', {
-                    field: null,
-                    school: null,
-                    major: null,
-                    keyword: major
+        if (field.length > 0) {
+            const inputData = {
+                field: field,
+                major: null,
+                university: null,
+                keyword: keyword
+            };
+            axios.post('/api/8482/analysis', inputData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                withCredentials: true
+            })
+                .then(response => {
+                    const passRate = response.data;
+                    console.log(passRate)
+                })
+                .catch(error => {
+                    console.error('분석 중 오류가 발생했습니다.', error.response.data);
                 });
 
-                const acceptanceRate = response.data.acceptance_rate;
-                const updatedSchools = schools.map(school => {
-                    if (school.university === response.data.school) {
-                        return { ...school, pass: acceptanceRate };
-                    }
-                    return school;
-                });
-                setSchools(updatedSchools);
-                console.log('학교:', response.data.school);
-                console.log('계열:', response.data.field);
-                console.log('학과:', response.data.major);
-                console.log('합격률:', acceptanceRate);
-            } catch (error) {
-                console.error('합격률 조회 실패:', error.message);
-            }
         }
     };
 
