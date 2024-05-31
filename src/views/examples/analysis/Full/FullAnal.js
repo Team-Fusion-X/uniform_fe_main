@@ -277,7 +277,7 @@ function FullAnal() {
                 startPage = totalPages - 9;
                 endPage = totalPages;
             } else {
-                startPage = currentPage - 5;
+                startPage = currentPage - 4;
                 endPage = currentPage + 5;
             }
         }
