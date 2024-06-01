@@ -2,13 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Map, MarkerClusterer, MapMarker, ZoomControl } from "react-kakao-maps-sdk";
 import { CgClose } from "react-icons/cg";
 import axios from 'axios';
-// image and data
+import { Spinner } from 'reactstrap';
 import red_marker from './image/red.png';
 import blue_marker from './image/blue.png';
 import green_marker from './image/green.png';
 import yellow_marker from './image/yellow.png';
 import data from './json/test_user_data.json';
-//pages
 import MapInfo from './MapInfo';
 import SearchBar from './SearchBar';
 import MajorSelection from './MajorSelect';
@@ -17,63 +16,28 @@ const UMap = () => {
     const [clusterLevel, setClusterLevel] = useState(10);
     const [positions, setPositions] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
+    const [selectedMajors, setSelectedMajors] = useState([]); // 여기로 상태 선언을 이동
+    const [isLoading, setIsLoading] = useState(false);
     const mapRef = useRef(null);
     const maxLevel = 13;
 
-    // Search Bar 관련 설정
-    const handleSearch = (searchTerm) => {
-        if (!mapRef.current) return; // 지도 인스턴스가 없다면 함수 종료
-        const ps = new window.kakao.maps.services.Places(); // 장소 검색 객체
 
+    const handleSearch = (searchTerm) => {
+        if (!mapRef.current) return;
+        const ps = new window.kakao.maps.services.Places();
         ps.keywordSearch(searchTerm, (data, status) => {
             if (status === window.kakao.maps.services.Status.OK) {
                 const bounds = new window.kakao.maps.LatLngBounds();
                 data.forEach((place) => {
                     bounds.extend(new window.kakao.maps.LatLng(place.y, place.x));
                 });
-                mapRef.current.setBounds(bounds); // 검색된 장소를 포함하는 지도 범위로 이동
+                mapRef.current.setBounds(bounds);
             } else {
                 console.error("검색 결과가 없습니다.");
             }
         });
     };
 
-    // MajorSelect 관련 설정
-    const [selectedMajors, setSelectedMajors] = useState([]);
-    const [schools, setSchools] = useState(data);
-    const handleSelectionComplete = async (field, keyword) => {
-        // majors 상태 업데이트
-        setSelectedMajors(field);
-        console.log('Selected field:', field);
-        console.log('Selected keyword:', keyword);
-
-
-        // 전공이 있을 경우만 실행
-        if (field.length > 0) {
-            const inputData = {
-                field: field,
-                major: null,
-                university: null,
-                keyword: keyword
-            };
-            axios.post('/api/8482/analysis', inputData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                withCredentials: true
-            })
-                .then(response => {
-                    const passRate = response.data;
-                    console.log(passRate)
-                })
-                .catch(error => {
-                    console.error('분석 중 오류가 발생했습니다.', error.response.data);
-                });
-
-        }
-    };
-
-    // 합격률에 따라 마커 이미지를 결정하는 함수
     const getMarkerImage = (passValue) => {
         if (passValue < 20) return red_marker;
         if (passValue >= 20 && passValue < 50) return yellow_marker;
@@ -81,15 +45,95 @@ const UMap = () => {
         if (passValue >= 80) return blue_marker;
     };
 
+    const groupByUniversity = (data) => {
+        const results = {};
+        data.forEach(item => {
+            const key = item.university;
+            if (!results[key]) {
+                results[key] = {
+                    ...item,
+                    count: 0,
+                    total: 0,
+                };
+            }
+            results[key].total += parseInt(item.possibility, 10);
+            results[key].count += 1;
+        });
+
+        return Object.values(results).map(item => ({
+            ...item,
+            possibility: Math.round(item.total / item.count),
+        }));
+    };
+
+    const handleSelectionComplete = async (field, keyword) => {
+        setSelectedMajors(field); // 상태 업데이트 함수 사용
+        setIsLoading(true);  // 로딩 시작
+        console.log('Selected field:', field);
+        console.log('Selected keyword:', keyword);
+
+        // keyword가 '기타'일 경우 null로 설정
+        const effectiveKeyword = keyword === '기타' ? null : keyword;
+
+        if (field.length > 0) {
+            const inputData = {
+                field: field,
+                major: null,
+                university: null,
+                keyword: effectiveKeyword
+            };
+            try {
+                const response = await axios.post('/api/8482/analysis', inputData, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
+                });
+                const passRateData = response.data.data_list;
+                const groupedData = groupByUniversity(passRateData);
+                console.log('Grouped Data:', groupedData);
+
+                const updatedPositions = groupedData.map(dataItem => {
+                    const match = data.find(jsonItem => jsonItem.university === dataItem.university);
+                    if (match) {
+                        return {
+                            lat: match.lat,
+                            lng: match.lng,
+                            university: dataItem.university,
+                            pass: dataItem.possibility,
+                            image: getMarkerImage(dataItem.possibility),
+                            location: match.location,
+                            url: match.home_url
+                        };
+                    }
+                    return null;
+                }).filter(item => item !== null);
+
+                setPositions(updatedPositions);
+            } catch (error) {
+                console.error('분석 중 오류가 발생했습니다.', error.response?.data || error.message);
+            } finally {
+                setIsLoading(false);  // 로딩 종료
+            }
+        } else {
+            setIsLoading(false);  // 필드가 비어있는 경우 바로 로딩 종료
+        }
+    };
+
     useEffect(() => {
         const positionsArray = data.map(item => ({
-            lat: item.lat, // 위도
-            lng: item.lng, // 경도
-            pass: item.pass, // 합격률
-            image: getMarkerImage(item.pass), // pass 값에 따라 이미지를 결정
+            lat: item.lat,
+            lng: item.lng,
+            pass: item.pass,
+            image: getMarkerImage(item.pass),
         }));
         setPositions(positionsArray);
     }, []);
+    useEffect(() => {
+        if (mapRef.current) {
+            mapRef.current.setLevel(30);
+        }
+    }, [positions]);
 
     const clusterStyles = [
         {
@@ -106,6 +150,29 @@ const UMap = () => {
 
     return (
         <>
+            {/* 로딩창 */}
+            {isLoading && (
+                <div style={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 1000,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '200px',
+                    height: '100px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    borderRadius: '10px',
+                    padding: '20px',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                }}>
+                    <Spinner color="primary">Loading...</Spinner>
+                    <div>분석 중..</div>
+                </div>
+            )}
             <div style={{ display: "flex", height: "550px" }}>
                 <div style={{ width: "30%", background: "#f9f9f9", padding: "20px" }}>
                     {/* 왼쪽 패널 */}
@@ -131,6 +198,7 @@ const UMap = () => {
                         }}
                     >
                         <MarkerClusterer
+                            key={JSON.stringify(positions)}
                             averageCenter={true}
                             minLevel={10}
                             styles={clusterStyles}
