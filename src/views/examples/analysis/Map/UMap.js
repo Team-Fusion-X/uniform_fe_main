@@ -72,12 +72,15 @@ const UMap = () => {
         console.log('Selected field:', field);
         console.log('Selected keyword:', keyword);
 
+        // keyword가 '기타'일 경우 null로 설정
+        const effectiveKeyword = keyword === '기타' ? null : keyword;
+
         if (field.length > 0) {
             const inputData = {
                 field: field,
                 major: null,
                 university: null,
-                keyword: keyword
+                keyword: effectiveKeyword
             };
             try {
                 const response = await axios.post('/api/8482/analysis', inputData, {
