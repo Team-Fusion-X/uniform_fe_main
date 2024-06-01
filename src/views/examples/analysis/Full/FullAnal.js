@@ -56,18 +56,7 @@ function FullAnal() {
         const departmentMap = new Map();
         data.forEach(item => {
             const department = item.department;
-            if (department.length >= 5) {
-                if (departmentMap.has(department.substring(0, 5))) {
-                    const existing = departmentMap.get(department.substring(0, 5));
-                    if (department.length < existing.length) {
-                        departmentMap.set(department.substring(0, 5), department);
-                    }
-                } else {
-                    departmentMap.set(department.substring(0, 5), department);
-                }
-            } else {
-                departmentMap.set(department, department);
-            }
+            departmentMap.set(department, department);
         });
 
         return Array.from(departmentMap.values()).map(dept => ({ value: dept, label: dept }));
