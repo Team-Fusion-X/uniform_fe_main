@@ -8,7 +8,7 @@ import red_marker from './image/red.png';
 import blue_marker from './image/blue.png';
 import green_marker from './image/green.png';
 import yellow_marker from './image/yellow.png';
-import data from './json/test_user_data.json';
+import data from './json/map_data.json';
 import MapInfo from './MapInfo';
 import SearchBar from './SearchBar';
 import MajorSelection from './MajorSelect';
@@ -125,8 +125,7 @@ const UMap = () => {
         const positionsArray = data.map(item => ({
             lat: item.lat,
             lng: item.lng,
-            pass: item.pass,
-            image: getMarkerImage(item.pass),
+            image: glay_marker,
         }));
         setPositions(positionsArray);
     }, []);
@@ -209,7 +208,7 @@ const UMap = () => {
                                     key={index}
                                     position={pos}
                                     image={{
-                                        src: glay_marker, // 처음엔 회색 마커로 초기화
+                                        src: pos.image, // 사용자 정의 마커 이미지
                                         size: {
                                             width: 35,
                                             height: 35
@@ -298,7 +297,7 @@ const EventMarkerContainer = ({ position, university, location, url, logo }) => 
             onClick={() => setIsOpen(!isOpen)}
             clickable={true}
             image={{
-                src: glay_marker, // 처음엔 회색 마커로 초기화
+                src: position.image, // 사용자 정의 마커 이미지
                 size: {
                     width: 35,
                     height: 35
