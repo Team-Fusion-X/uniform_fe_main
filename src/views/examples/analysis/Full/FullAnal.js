@@ -213,6 +213,9 @@ function FullAnal() {
                     category: getCategory(parseInt(item.possibility)),
                 }));
 
+                // 내림차순으로 정렬
+                updatedData.sort((a, b) => b.possibility - a.possibility);
+
                 setData(updatedData);
                 setFilteredData([]); // 필터링된 데이터 초기화
                 setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
@@ -244,7 +247,7 @@ function FullAnal() {
         filtered.sort((a, b) => b.possibility - a.possibility);
 
         if (filtered.length === 0) {
-            alert(`${category} 카테고리에 해당하는 대학이 없습니다.`);
+            alert(`${category} 카테고리에 해당하는 결과가 없습니다.`);
         } else {
             setFilteredData(filtered);
             setCurrentPage(1);
@@ -322,7 +325,7 @@ function FullAnal() {
         }
     };
 
-const closeModal = () => {
+    const closeModal = () => {
         setIsModalOpen(false);
     };
 
