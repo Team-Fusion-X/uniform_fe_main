@@ -3,11 +3,12 @@ import { Map, MarkerClusterer, MapMarker, ZoomControl } from "react-kakao-maps-s
 import { CgClose } from "react-icons/cg";
 import axios from 'axios';
 import { Spinner } from 'reactstrap';
+import glay_marker from './image/glay.png';
 import red_marker from './image/red.png';
 import blue_marker from './image/blue.png';
 import green_marker from './image/green.png';
 import yellow_marker from './image/yellow.png';
-import data from './json/test_user_data.json';
+import data from './json/map_data.json';
 import MapInfo from './MapInfo';
 import SearchBar from './SearchBar';
 import MajorSelection from './MajorSelect';
@@ -51,26 +52,29 @@ const UMap = () => {
             const key = item.university;
             if (!results[key]) {
                 results[key] = {
-                    ...item,
+                    university: item.university,
+                    departments: [],  // 학과별 데이터를 저장할 배열
                     count: 0,
                     total: 0,
                 };
             }
+            results[key].departments.push({
+                department: item.major,
+                passRate: parseInt(item.possibility, 10)
+            });
             results[key].total += parseInt(item.possibility, 10);
             results[key].count += 1;
         });
 
         return Object.values(results).map(item => ({
             ...item,
-            possibility: Math.round(item.total / item.count),
+            possibility: Math.round(item.total / item.count), // 전체 합격률 계산
         }));
     };
 
     const handleSelectionComplete = async (field, keyword) => {
         setSelectedMajors(field); // 상태 업데이트 함수 사용
         setIsLoading(true);  // 로딩 시작
-        console.log('Selected field:', field);
-        console.log('Selected keyword:', keyword);
 
         // keyword가 '기타'일 경우 null로 설정
         const effectiveKeyword = keyword === '기타' ? null : keyword;
@@ -103,12 +107,14 @@ const UMap = () => {
                             pass: dataItem.possibility,
                             image: getMarkerImage(dataItem.possibility),
                             location: match.location,
-                            url: match.home_url
+                            url: match.home_url,
+                            departments: dataItem.departments,  // 학과별 데이터 추가
                         };
                     }
                     return null;
                 }).filter(item => item !== null);
 
+                console.log('Updated positions:', updatedPositions); // 로그 추가
                 setPositions(updatedPositions);
             } catch (error) {
                 console.error('분석 중 오류가 발생했습니다.', error.response?.data || error.message);
@@ -124,8 +130,7 @@ const UMap = () => {
         const positionsArray = data.map(item => ({
             lat: item.lat,
             lng: item.lng,
-            pass: item.pass,
-            image: getMarkerImage(item.pass),
+            image: glay_marker,
         }));
         setPositions(positionsArray);
     }, []);
@@ -214,7 +219,7 @@ const UMap = () => {
                                             height: 35
                                         }
                                     }}
-                                    onClick={() => setSelectedMarker({ latlng: pos })}
+                                    onClick={() => setSelectedMarker({ latlng: pos, departments: pos.departments })}
                                 />
                             ))}
                         </MarkerClusterer>
@@ -225,6 +230,7 @@ const UMap = () => {
                                 location={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).location}
                                 url={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).home_url}
                                 logo={data.find(item => item.lat === selectedMarker.latlng.lat && item.lng === selectedMarker.latlng.lng).logo}
+                                departments={selectedMarker.departments}  // 확인 필요
                             />
                         )}
                         <ZoomControl position="RIGHT_BOTTOM" />
@@ -235,7 +241,7 @@ const UMap = () => {
     );
 };
 
-const EventMarkerContainer = ({ position, university, location, url, logo }) => {
+const EventMarkerContainer = ({ position, university, location, url, logo, departments }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const styles = {
@@ -339,6 +345,11 @@ const EventMarkerContainer = ({ position, university, location, url, logo }) => 
                                     </a>
                                 </div>
                             </div>
+                            {departments && departments.map(dept => (
+                                <div key={dept.department}>
+                                    <strong>{dept.department}</strong>: {dept.passRate}%
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
