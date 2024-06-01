@@ -3,6 +3,7 @@ import { Map, MarkerClusterer, MapMarker, ZoomControl } from "react-kakao-maps-s
 import { CgClose } from "react-icons/cg";
 import axios from 'axios';
 import { Spinner } from 'reactstrap';
+import glay_marker from './image/glay.png';
 import red_marker from './image/red.png';
 import blue_marker from './image/blue.png';
 import green_marker from './image/green.png';
@@ -208,7 +209,7 @@ const UMap = () => {
                                     key={index}
                                     position={pos}
                                     image={{
-                                        src: pos.image, // 사용자 정의 마커 이미지
+                                        src: glay_marker, // 처음엔 회색 마커로 초기화
                                         size: {
                                             width: 35,
                                             height: 35
@@ -297,7 +298,7 @@ const EventMarkerContainer = ({ position, university, location, url, logo }) => 
             onClick={() => setIsOpen(!isOpen)}
             clickable={true}
             image={{
-                src: position.image, // 사용자 정의 마커 이미지
+                src: glay_marker, // 처음엔 회색 마커로 초기화
                 size: {
                     width: 35,
                     height: 35

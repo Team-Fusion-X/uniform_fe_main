@@ -15,7 +15,7 @@ const SearchBar = ({ onSearch }) => {
 
     return (
         <>
-            <div className="text-center" style={{ fontSize: "17px", marginTop: "2rem" }}>
+            <div className="text-center" style={{ fontSize: "16px", marginTop: "2rem" }}>
                 원하는 지역이나 장소를 입력하여 검색하세요.
             </div>
             <Form onSubmit={handleSubmit} className="d-flex mt-3 mb-4">
