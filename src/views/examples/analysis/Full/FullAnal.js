@@ -214,12 +214,21 @@ function FullAnal() {
                 }));
 
                 setData(updatedData);
-                console.log('Updated data:', updatedData); // 데이터 상태 확인
                 setFilteredData([]); // 필터링된 데이터 초기화
                 setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
                 setCurrentPage(1);
+                setIsLoading(false);
+                setIsModalOpen(false);
 
-                setIsLoading(false); // 로딩 중 상태 해제
+                // 자동으로 가장 높은 우선순위의 데이터를 필터링하고 보여주기
+                const categories = ["여유", "적절", "도전", "위험"];
+                for (let category of categories) {
+                    const filteredData = updatedData.filter(item => item.category === category);
+                    if (filteredData.length > 0) {
+                        setFilteredData(filteredData);
+                        break;
+                    }
+                }
             })
             .catch(error => {
                 if (error.response) {
