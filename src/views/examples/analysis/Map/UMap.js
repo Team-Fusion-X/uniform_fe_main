@@ -42,8 +42,8 @@ const UMap = () => {
     const getMarkerImage = (passValue) => {
         if (passValue < 20) return red_marker;
         if (passValue >= 20 && passValue < 50) return yellow_marker;
-        if (passValue >= 50 && passValue < 80) return green_marker;
-        if (passValue >= 80) return blue_marker;
+        if (passValue >= 50 && passValue < 75) return green_marker;
+        if (passValue >= 75) return blue_marker;
     };
 
     const groupByUniversity = (data) => {
