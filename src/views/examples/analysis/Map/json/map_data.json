@@ -1529,6 +1529,14 @@
         "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSt1x4WfOaV6AEiFuzo7XgcJD0gDC-rBqKY5xnVoI3PHw&s"
     },
     {
+        "university": "성균관대",
+        "lat": 37.5878,
+        "lng": 126.9945,
+        "location": "서울특별시 종로구 성균관로 25-2",
+        "home_url": "https://www.skku.edu/skku/",
+        "logo": "https://imba.ac.kr/og.png"
+    },
+    {
         "university": "한국항공대",
         "lat": 37.599355,
         "lng": 126.8651474,
