@@ -101,11 +101,11 @@ class Landing extends React.Component {
                             집중 분석 모드
                           </h6>
                           <p className="description mt-3">
-                            최대 6개의 대학을 지정하여 합격률을 집중적으로 분석 및 조회합니다.
+                            1개의 대학을 지정하여 합격률을 집중적으로 분석 및 조회합니다.
                           </p>
                           <div>
                             <Badge color="primary" pill className="mr-1">
-                              최대 6개 선택
+                              특정 대학 검색
                             </Badge>
                             <Badge color="primary" pill className="mr-1">
                               대학별 비교
