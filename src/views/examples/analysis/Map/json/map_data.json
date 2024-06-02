@@ -996,9 +996,33 @@
         "university": "DGIST",
         "lat": 35.7046875,
         "lng": 128.4570625,
-        "location": "Daegu Gyeongbuk, Institute of Science and Technology, 달성군 대구광역시 대한민국",
+        "location": "대구 광역시 달성군",
         "home_url": "https://www.dgist.ac.kr/",
         "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8zgQ03UdU0s-Ggqpahqx_CNDyH2ASTMvTU13_u8TQsA&s"
+    },
+    {
+        "university": "GIST",
+        "lat": 35.2282,
+        "lng": 126.8396,
+        "location": "광주광역시 북구 첨단과기로 123",
+        "home_url": "https://www.gist.ac.kr/",
+        "logo": "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTExMDFfMTkx%2FMDAxNjM1NzQ1MjEyOTAz.ZIuw4u-ov_H6rm4sfgwPfwX1bzxUv0Gk0S4YSIo2vlgg.BHCI6I4Ew793rPi8AkyugVE-F1gBpxIUUd4Spii7QLUg.JPEG.dldbstjd282%2F%25B4%25D9%25BF%25EE%25B7%25CE%25B5%25E5_%25282%2529.jpg&type=sc960_832"
+    },
+    {
+        "university": "아세아연합신학대",
+        "lat": 37.5107,
+        "lng": 127.4269,
+        "location": "경기도 양평군 옥천면 경강로 1276",
+        "home_url": "https://www.acts.ac.kr/",
+        "logo": "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2FMjAxNzEyMThfMTEw%2FMDAxNTEzNTMyMDMyMjcx.0KvO49Ta_jsoFNNLwPEOdnAO8x9yPr5l3f5gZhsQTgYg.hBzlZFz2hisrJkIlGMJ6Bq7uXOsJAGY-B-yd3QyWjNYg.JPEG.hth990619%2F%25BE%25C6%25BC%25BC%25BE%25C6%25BF%25AC%25C7%25D5%25BD%25C5%25C7%25D0%25B4%25EB.jpg&type=sc960_832"
+    },
+    {
+        "university": "칼빈대",
+        "lat": 37.5107,
+        "lng": 127.4269,
+        "location": "경기도 용인시 기흥구 마북로 184",
+        "home_url": "http://www.calvin.ac.kr/",
+        "logo": "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2FMjAxNzEyMThfMTUg%2FMDAxNTEzNTY0MDk3NDcx.Vjgi97qNDO3-sErMgnLD1v5V6-4maFDnu4rZlSK7m6kg.-RKa74LEoCs38EJSe-pVAqvK11IxyB4IDLmNMP3KCXkg.JPEG.hth990619%2F%25C4%25AE%25BA%25F3%25B4%25EB.jpg&type=sc960_832"
     },
     {
         "university": "건양대(논산)",
