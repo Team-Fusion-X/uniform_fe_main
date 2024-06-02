@@ -63,7 +63,7 @@ function Register() {
       return;
     }
     try {
-      const response = await axios.post('http://orion.mokpo.ac.kr:8482/api/members/save', {
+      const response = await axios.post('api/8482/members/save', {
         memberName: memberName,
         memberId: memberId,
         memberPassword: memberPassword,
