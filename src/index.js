@@ -23,8 +23,8 @@ root.render(
   <BrowserRouter>
     <AuthProvider>
       <Routes>
-        <Route path="/" exact element={<Index />} />
-        <Route path="/landing-page" exact element={<Landing />} />
+        <Route path="/" exact element={<Landing />} />
+        <Route path="/landing-page" exact element={<Index />} />
         <Route path="/full-analysis-page" exact element={<FullAnalysis />} />
         <Route path="/intensive-analysis-page" exact element={<IntensiveAnalysis />} />
         <Route path="/map-analysis-page" exact element={<MapAnalysis />} />

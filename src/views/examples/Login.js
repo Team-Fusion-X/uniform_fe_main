@@ -46,7 +46,7 @@ function Login() {
       Cookies.set('sessionId', sessionId, { expires: 1/48, path: '/'}); // 쿠키에 세션 ID 저장
       setAuth({ isLoggedIn: true, sessionId: sessionId });
 
-      navigate('/landing-page');
+      navigate('/');
       // 추가적인 성공 처리 로직
     } catch (error) {
       alert('아이디가 존재하지 않거나 비밀번호가 맞지 않습니다.');

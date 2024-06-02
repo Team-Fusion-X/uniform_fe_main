@@ -140,7 +140,7 @@ function Record() {
       "credit": parseInt(credit),
       "rawScore": parseFloat(rawScore),
       "subjectMean": parseFloat(subjectMean),
-      "sdeviation": parseFloat(sDeviation),
+      "sDeviation": parseFloat(sDeviation),
       "headCount": parseInt(headCount),
       "ranking": parseInt(ranking)
     };
@@ -158,7 +158,7 @@ function Record() {
         credit: newScore.credit,
         rawScore: newScore.rawScore,
         subjectMean: newScore.subjectMean,
-        sdeviation: newScore.sdeviation,
+        sDeviation: newScore.sdeviation,
         headCount: newScore.headCount,
         ranking: newScore.ranking
       });
