@@ -87,7 +87,7 @@ function DemoNavbar() {
                             집중 분석 모드
                           </h6>
                           <p className="description d-none d-md-inline-block mb-0">
-                            최대 6개의 대학을 지정하여 합격률을 집중적으로 분석 및 조회합니다.
+                            특정 대학 특정 학과를 지정하여 합격률을 집중적으로 분석 및 조회합니다.
                           </p>
                         </Media>
                       </Media>

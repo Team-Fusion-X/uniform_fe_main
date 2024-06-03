@@ -158,7 +158,7 @@ function Record() {
         credit: newScore.credit,
         rawScore: newScore.rawScore,
         subjectMean: newScore.subjectMean,
-        sDeviation: newScore.sdeviation,
+        sDeviation: newScore.sDeviation,
         headCount: newScore.headCount,
         ranking: newScore.ranking
       });
@@ -229,7 +229,7 @@ function Record() {
             credit: item.credit,
             rawScore: item.rawScore,
             subjectMean: item.subjectMean,
-            sdeviation: item.sdeviation,
+            sDeviation: item.sdeviation,
             headCount: item.headCount,
             ranking: item.ranking
           });
@@ -291,7 +291,7 @@ function Record() {
                       <td>{score.credit}</td>
                       <td>{score.rawScore}</td>
                       <td>{score.subjectMean}</td>
-                      <td>{score.sdeviation}</td>
+                      <td>{score.sDeviation}</td>
                       <td>{score.headCount}</td>
                       <td>{score.ranking}</td>
                     </tr>
